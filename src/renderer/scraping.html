@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scraping - BuscaLogo Desktop</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/themes.css">
+  <link rel="stylesheet" href="styles/scraping.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="app-logo">
+        <span class="logo-icon">🔍</span>
+        <span class="logo-text">BuscaLogo</span>
+        <span class="logo-version">Desktop v1.0.0</span>
+      </div>
+    </div>
+    
+    <div class="header-center">
+      <h1>🎯 Sistema de Scraping</h1>
+    </div>
+    
+    <div class="header-right">
+      <button id="backButton" class="btn btn-secondary" title="Voltar ao app principal">
+        ← Voltar
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="scraping-main">
+    <!-- Capture Form Section -->
+    <section class="capture-section">
+      <div class="section-header">
+        <h2>📥 Adicionar URL para Captura</h2>
+        <p>Insira URLs para serem capturadas e indexadas no sistema</p>
+      </div>
+      
+      <form id="captureForm" class="capture-form">
+        <div class="form-row">
+          <div class="form-group url-group">
+            <label for="urlInput">URL do Site:</label>
+            <input 
+              type="url" 
+              id="urlInput" 
+              class="form-input url-input" 
+              placeholder="https://exemplo.com"
+              required
+            >
+          </div>
+          
+          <div class="form-group priority-group">
+            <label for="prioritySelect">Prioridade:</label>
+            <select id="prioritySelect" class="form-select">
+              <option value="normal">Normal</option>
+              <option value="high">Alta</option>
+              <option value="low">Baixa</option>
+            </select>
+          </div>
+          
+          <div class="form-group button-group">
+            <button type="submit" id="captureButton" class="btn btn-primary">
+              🎯 Adicionar à Fila
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-row options-row">
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="captureImages" checked>
+              <span class="checkmark"></span>
+              Capturar Imagens
+            </label>
+          </div>
+          
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="captureLinks" checked>
+              <span class="checkmark"></span>
+              Capturar Links
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Queue Status Section -->
+    <section class="queue-status-section">
+      <div class="section-header">
+        <h2>📋 Status da Fila de Captura</h2>
+        <p>Monitoramento em tempo real do processo de scraping</p>
+      </div>
+      
+      <div class="status-grid">
+        <div class="status-card">
+          <div class="status-icon">📊</div>
+          <div class="status-content">
+            <div class="status-label">Status da Fila</div>
+            <div class="status-value" id="queueStatus">Aguardando</div>
+          </div>
+        </div>
+        
+        <div class="status-card">
+          <div class="status-icon">📝</div>
+          <div class="status-content">
+            <div class="status-label">Itens na Fila</div>
+            <div class="status-value" id="queueLength">0</div>
+          </div>
+        </div>
+        
+        <div class="status-card">
+          <div class="status-icon">🎯</div>
+          <div class="status-content">
+            <div class="status-label">Capturando Agora</div>
+            <div class="status-value" id="currentCapture">Nenhuma</div>
+          </div>
+        </div>
+        
+        <div class="status-card">
+          <div class="status-icon">⚡</div>
+          <div class="status-content">
+            <div class="status-label">Sistema Ativo</div>
+            <div class="status-value" id="isCapturing">Não</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="queue-controls">
+        <button id="pauseQueue" class="btn btn-warning">
+          ⏸️ Pausar Fila
+        </button>
+        <button id="resumeQueue" class="btn btn-success" disabled>
+          ▶️ Resumir Fila
+        </button>
+        <button id="clearQueue" class="btn btn-danger" disabled>
+          🗑️ Limpar Fila
+        </button>
+      </div>
+    </section>
+
+    <!-- Queue List Section -->
+    <section class="queue-list-section">
+      <div class="section-header">
+        <h2>📋 Lista da Fila de Captura</h2>
+        <p>Visualize e gerencie os itens aguardando captura</p>
+      </div>
+      
+      <div id="queueList" class="queue-list">
+        <div class="empty-queue">
+          <span class="empty-icon">📋</span>
+          <p>Fila vazia - Adicione URLs para começar</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+      <div class="section-header">
+        <h2>📊 Estatísticas de Scraping</h2>
+        <p>Métricas e performance do sistema de captura</p>
+      </div>
+      
+      <div id="scrapingStats" class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📄</div>
+          <div class="stat-content">
+            <div class="stat-number" id="totalPages">0</div>
+            <div class="stat-label">Total de Páginas</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-number" id="capturedPages">0</div>
+            <div class="stat-label">Páginas Capturadas</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">❌</div>
+          <div class="stat-content">
+            <div class="stat-number" id="failedPages">0</div>
+            <div class="stat-label">Páginas com Erro</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-content">
+            <div class="stat-number" id="successRate">0%</div>
+            <div class="stat-label">Taxa de Sucesso</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section class="settings-section">
+      <div class="section-header">
+        <h2>⚙️ Configurações de Scraping</h2>
+        <p>Configure o comportamento do sistema de captura</p>
+      </div>
+      
+      <form id="scrapingSettingsForm" class="settings-form">
+        <div class="settings-grid">
+          <div class="settings-column">
+            <h3>Configurações de Performance</h3>
+            
+            <div class="form-group">
+              <label for="maxConcurrent">Capturas Simultâneas:</label>
+              <input 
+                type="number" 
+                id="maxConcurrent" 
+                class="form-input" 
+                min="1" 
+                max="10" 
+                value="3"
+              >
+              <small>Número máximo de capturas executando ao mesmo tempo</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="captureDelay">Delay entre Capturas (ms):</label>
+              <input 
+                type="number" 
+                id="captureDelay" 
+                class="form-input" 
+                min="0" 
+                max="10000" 
+                value="1000"
+              >
+              <small>Tempo de espera entre capturas consecutivas</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="maxRetries">Tentativas Máximas:</label>
+              <input 
+                type="number" 
+                id="maxRetries" 
+                class="form-input" 
+                min="1" 
+                max="10" 
+                value="3"
+              >
+              <small>Número de tentativas para páginas com erro</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="timeout">Timeout (ms):</label>
+              <input 
+                type="number" 
+                id="timeout" 
+                class="form-input" 
+                min="5000" 
+                max="120000" 
+                value="30000"
+              >
+              <small>Tempo limite para cada captura</small>
+            </div>
+          </div>
+          
+          <div class="settings-column">
+            <h3>Configurações de Limpeza</h3>
+            
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="autoCleanup" checked>
+                <span class="checkmark"></span>
+                Limpeza Automática
+              </label>
+              <small>Remove dados antigos automaticamente</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="cleanupInterval">Intervalo de Limpeza (dias):</label>
+              <input 
+                type="number" 
+                id="cleanupInterval" 
+                class="form-input" 
+                min="1" 
+                max="365" 
+                value="30"
+              >
+              <small>Frequência da limpeza automática</small>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" id="saveScrapingSettings" class="btn btn-primary">
+            💾 Salvar Configurações
+          </button>
+          <button type="button" id="resetSettings" class="btn btn-secondary">
+            🔄 Restaurar Padrões
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Recent Activity Section -->
+    <section class="activity-section">
+      <div class="section-header">
+        <h2>📅 Atividade Recente</h2>
+        <p>Histórico das últimas capturas realizadas</p>
+      </div>
+      
+      <div id="recentActivity" class="activity-list">
+        <div class="empty-activity">
+          <span class="empty-icon">📅</span>
+          <p>Nenhuma atividade recente</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/scraping/scraping-config.js"></script>
+  <script src="js/scraping/scraper.js"></script>
+  <script src="js/scraping/scraping-controls.js"></script>
+  <script>
+    // Inicializa o sistema de scraping
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        console.log('🚀 Inicializando sistema de scraping...');
+        
+        // Cria instância do scraper
+        const scraper = new BuscaLogoScraper();
+        
+        // Aguarda inicialização
+        await new Promise(resolve => {
+          const checkInit = () => {
+            if (scraper.db) {
+              resolve();
+            } else {
+              setTimeout(checkInit, 100);
+            }
+          };
+          checkInit();
+        });
+        
+        // Cria controles
+        const controls = new ScrapingControls(scraper);
+        
+        // Configura botão de voltar
+        const backButton = document.getElementById('backButton');
+        if (backButton) {
+          backButton.addEventListener('click', () => {
+            if (window.buscalogoApp) {
+              window.buscalogoApp.showView('dashboard');
+            } else {
+              window.history.back();
+            }
+          });
+        }
+        
+        // Configura reset de configurações
+        const resetButton = document.getElementById('resetSettings');
+        if (resetButton) {
+          resetButton.addEventListener('click', async () => {
+            if (confirm('Tem certeza que deseja restaurar as configurações padrão?')) {
+              try {
+                const defaultSettings = {
+                  id: 'default',
+                  maxConcurrentCaptures: 3,
+                  captureDelay: 1000,
+                  maxRetries: 3,
+                  timeout: 30000,
+                  userAgent: 'BuscaLogo-Desktop/1.0.0',
+                  followRedirects: true,
+                  captureImages: true,
+                  captureLinks: true,
+                  maxContentSize: 10485760,
+                  autoCleanup: true,
+                  cleanupInterval: 86400000,
+                  lastCleanup: Date.now()
+                };
+                
+                await scraper.saveScrapingSettings(defaultSettings);
+                scraper.settings = defaultSettings;
+                
+                await controls.loadSettings();
+                controls.showMessage('Configurações restauradas para padrão', 'success');
+                
+              } catch (error) {
+                console.error('❌ Erro ao resetar configurações:', error);
+                controls.showMessage('Erro ao resetar configurações', 'error');
+              }
+            }
+          });
+        }
+        
+        console.log('✅ Sistema de scraping inicializado com sucesso');
+        
+      } catch (error) {
+        console.error('❌ Erro ao inicializar sistema de scraping:', error);
+      }
+    });
+  </script>
+</body>
+</html>

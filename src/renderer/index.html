@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuscaLogo Desktop</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/scraping.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="app-logo">
+        <span class="logo-icon">🔍</span>
+        <span class="logo-text">BuscaLogo</span>
+        <span class="logo-version">Desktop v1.0.0</span>
+      </div>
+    </div>
+    
+    <div class="header-center">
+      <div class="app-title">
+        <h1>🎯 BuscaLogo Desktop</h1>
+        <p>Sistema de Scraping e Sincronização</p>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <button id="themeToggle" class="theme-toggle" title="Alternar tema">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button id="settingsButton" class="settings-button" title="Configurações">
+        <span class="settings-icon">⚙️</span>
+      </button>
+      <button id="syncButton" class="sync-button" title="Sincronizar com extensão">
+        <span class="sync-icon">🔄</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="app-main">
+    <!-- Sidebar -->
+    <aside class="app-sidebar">
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#dashboard" class="nav-link active" data-view="dashboard">
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+
+
+          <li class="nav-item">
+            <a href="#analytics" class="nav-link" data-view="analytics">
+              <span class="nav-icon">📈</span>
+              <span class="nav-text">Analytics</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="#scraping" class="nav-link" data-view="scraping">
+              <span class="nav-icon">🎯</span>
+              <span class="nav-text">Scraping</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#settings" class="nav-link" data-view="settings">
+              <span class="nav-icon">⚙️</span>
+              <span class="nav-text">Configurações</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-item">
+          <span class="status-icon">🔗</span>
+          <span class="status-text" id="connectionStatus">Desconectado</span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">📊</span>
+          <span class="status-text" id="dataStatus">0 páginas</span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">🌐</span>
+          
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content Area -->
+    <section class="content-area">
+      <!-- Dashboard View -->
+      <div id="dashboard" class="view-content active">
+        <div class="view-header">
+          <h1>📊 Dashboard</h1>
+          <p>Visão geral do sistema BuscaLogo</p>
+        </div>
+        
+        <div class="dashboard-grid">
+          <!-- Stats Cards -->
+          <div class="stats-section">
+            <h2>Estatísticas Gerais</h2>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">📄</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="totalPages">0</div>
+                  <div class="stat-label">Páginas Capturadas</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">🌐</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="uniqueHosts">0</div>
+                  <div class="stat-label">Hosts Únicos</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="totalSize">0 MB</div>
+                  <div class="stat-label">Tamanho Total</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">🔗</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="activePeers">0</div>
+                  <div class="stat-label">Peers Ativos</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recent Activity -->
+          <div class="activity-section">
+            <h2>Atividade Recente</h2>
+            <div class="activity-list" id="recentActivity">
+              <div class="activity-item">
+                <span class="activity-icon">📄</span>
+                <div class="activity-content">
+                  <div class="activity-title">Nenhuma atividade recente</div>
+                  <div class="activity-time">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
+        </div>
+      </div>
+
+
+
+
+
+      <!-- Analytics View -->
+      <div id="analytics" class="view-content" style="padding: 2rem; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); min-height: 100vh; overflow-y: auto;">
+        <div class="view-header" style="text-align: center; margin-bottom: 3rem; padding: 2rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+          <h1 style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; position: relative; z-index: 1;">📊 Analytics Dashboard</h1>
+          <p style="font-size: 1.1rem; color: #475569; font-weight: 500; position: relative; z-index: 1;">Análise detalhada de performance e métricas de scraping em tempo real</p>
+        </div>
+        
+        <!-- Filtros e Controles -->
+        <div class="analytics-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; padding: 1.5rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; position: relative;">
+          <div class="period-filters" style="display: flex; gap: 0.5rem; background: #f1f5f9; padding: 0.5rem; border-radius: 0.75rem; border: 1px solid #cbd5e1;">
+            <button class="period-filter active" data-period="7d" style="padding: 0.5rem 1rem; border: 2px solid #2563eb; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(-2px);">
+              <span class="filter-icon">📅</span>
+              7 Dias
+            </button>
+            <button class="period-filter" data-period="30d" style="padding: 0.5rem 1rem; border: 2px solid transparent; background: #ffffff; color: #475569; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+              <span class="filter-icon">📊</span>
+              30 Dias
+            </button>
+            <button class="period-filter" data-period="90d" style="padding: 0.5rem 1rem; border: 2px solid transparent; background: #ffffff; color: #475569; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+              <span class="filter-icon">📈</span>
+              90 Dias
+            </button>
+          </div>
+          
+          <div class="analytics-actions" style="display: flex; gap: 1rem; align-items: center;">
+            <select id="domainFilter" class="domain-filter" style="padding: 0.5rem 1rem; border: 2px solid #cbd5e1; background: #ffffff; color: #0f172a; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 500; min-width: 150px;">
+              <option value="">🌐 Todos os Domínios</option>
+              <!-- Opções serão preenchidas dinamicamente -->
+            </select>
+            
+            <button id="refreshAnalyticsBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem; background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+              <span class="btn-icon">🔄</span>
+              Atualizar
+            </button>
+            
+            <button id="exportAnalyticsBtn" class="btn btn-primary" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+              <span class="btn-icon">📤</span>
+              Exportar
+            </button>
+          </div>
+        </div>
+        
+        <!-- Métricas Resumidas -->
+        <div class="analytics-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+          <div class="summary-card" style="display: flex; align-items: center; gap: 1rem; padding: 2rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <div class="summary-icon" style="font-size: 2.5rem; background: linear-gradient(135deg, #2563eb, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">📄</div>
+            <div class="summary-content">
+              <div class="summary-number" id="totalPagesAnalytics" style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.25rem;">0</div>
+              <div class="summary-label" style="font-size: 0.85rem; color: #475569; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 0.5rem;">Total de Páginas</div>
+              <div class="summary-trend positive" style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; background: #d1fae5; color: #059669; border: 1px solid #059669; border-radius: 0.25rem; display: inline-block;">+12% este mês</div>
+            </div>
+          </div>
+          
+          <div class="summary-card" style="display: flex; align-items: center; gap: 1rem; padding: 2rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <div class="summary-icon" style="font-size: 2.5rem; background: linear-gradient(135deg, #2563eb, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🌐</div>
+            <div class="summary-content">
+              <div class="summary-number" id="uniqueDomainsAnalytics" style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.25rem;">0</div>
+              <div class="summary-label" style="font-size: 0.85rem; color: #475569; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 0.5rem;">Domínios Únicos</div>
+              <div class="summary-trend positive" style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; background: #d1fae5; color: #059669; border: 1px solid #059669; border-radius: 0.25rem; display: inline-block;">+5% esta semana</div>
+            </div>
+          </div>
+          
+          <div class="summary-card" style="display: flex; align-items: center; gap: 1rem; padding: 2rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <div class="summary-icon" style="font-size: 2.5rem; background: linear-gradient(135deg, #2563eb, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">📊</div>
+            <div class="summary-content">
+              <div class="summary-number" id="totalSizeAnalytics" style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.25rem;">0 KB</div>
+              <div class="summary-label" style="font-size: 0.85rem; color: #475569; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 0.5rem;">Tamanho Total</div>
+              <div class="summary-trend neutral" style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; background: #f1f5f9; color: #64748b; border: 1px solid #64748b; border-radius: 0.25rem; display: inline-block;">Estável</div>
+            </div>
+          </div>
+          
+          <div class="summary-card" style="display: flex; align-items: center; gap: 1rem; padding: 2rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <div class="summary-icon" style="font-size: 2.5rem; background: linear-gradient(135deg, #2563eb, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">📈</div>
+            <div class="summary-content">
+              <div class="summary-number" id="avgPerformanceAnalytics" style="font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.25rem;">0%</div>
+              <div class="summary-label" style="font-size: 0.85rem; color: #475569; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 0.5rem;">Performance Média</div>
+              <div class="summary-trend positive" style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; background: #d1fae5; color: #059669; border: 1px solid #059669; border-radius: 0.25rem; display: inline-block;">+8% hoje</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Gráficos -->
+        <div class="analytics-charts" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+          <!-- Gráfico de Páginas -->
+          <div class="chart-container" style="background: #ffffff; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #cbd5e1;">
+              <span class="chart-icon">📈</span>
+              Páginas Capturadas por Dia
+            </h3>
+            <div class="chart-wrapper" style="position: relative; height: 320px; width: 100%; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 0.75rem; padding: 1rem; border: 1px solid #cbd5e1;">
+              <canvas id="pagesChart"></canvas>
+            </div>
+            <div class="chart-footer" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #cbd5e1; text-align: center;">
+              <span class="chart-info" style="font-size: 0.8rem; color: #64748b; font-style: italic;">📊 Dados atualizados em tempo real</span>
+            </div>
+          </div>
+          
+          <!-- Gráfico de Domínios -->
+          <div class="chart-container" style="background: #ffffff; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #cbd5e1;">
+              <span class="chart-icon">🌐</span>
+              Distribuição por Domínio
+            </h3>
+            <div class="chart-wrapper" style="position: relative; height: 320px; width: 100%; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 0.75rem; padding: 1rem; border: 1px solid #cbd5e1;">
+              <canvas id="domainsChart"></canvas>
+            </div>
+            <div class="chart-footer" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #cbd5e1; text-align: center;">
+              <span class="chart-info" style="font-size: 0.8rem; color: #64748b; font-style: italic;">🎯 Top domínios mais ativos</span>
+            </div>
+          </div>
+          
+          <!-- Gráfico de Tamanho de Conteúdo -->
+          <div class="chart-container" style="background: #ffffff; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #cbd5e1;">
+              <span class="chart-icon">📊</span>
+              Tamanho de Conteúdo por Página
+            </h3>
+            <div class="chart-wrapper" style="position: relative; height: 320px; width: 100%; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 0.75rem; padding: 1rem; border: 1px solid #cbd5e1;">
+              <canvas id="contentSizeChart"></canvas>
+            </div>
+            <div class="chart-footer" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #cbd5e1; text-align: center;">
+              <span class="chart-info" style="font-size: 0.8rem; color: #64748b; font-style: italic;">💾 Análise de eficiência de armazenamento</span>
+            </div>
+          </div>
+          
+          <!-- Gráfico de Performance -->
+          <div class="chart-container" style="background: #ffffff; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #cbd5e1;">
+              <span class="chart-icon">🎯</span>
+              Métricas de Performance
+            </h3>
+            <div class="chart-wrapper" style="position: relative; height: 320px; width: 100%; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 0.75rem; padding: 1rem; border: 1px solid #cbd5e1;">
+              <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="chart-footer" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #cbd5e1; text-align: center;">
+              <span class="chart-info" style="font-size: 0.8rem; color: #64748b; font-style: italic;">⚡ Indicadores de qualidade do sistema</span>
+            </div>
+          </div>
+          
+          <!-- Gráfico de Análise de Links -->
+          <div class="chart-container" style="background: #ffffff; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #cbd5e1;">
+              <span class="chart-icon">🔗</span>
+              Análise de Links Descobertos
+            </h3>
+            <div class="chart-wrapper" style="position: relative; height: 320px; width: 100%; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 0.75rem; padding: 1rem; border: 1px solid #cbd5e1;">
+              <canvas id="linkAnalysisChart"></canvas>
+            </div>
+            <div class="chart-footer" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #cbd5e1; text-align: center;">
+              <span class="chart-info" style="font-size: 0.8rem; color: #64748b; font-style: italic;">🔍 Tipos e relevância dos links encontrados</span>
+            </div>
+          </div>
+          
+          <!-- Gráfico de Análise de Conteúdo -->
+          <div class="chart-container" style="background: #ffffff; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <h3 style="margin: 0 0 1.5rem 0; color: #0f172a; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #cbd5e1;">
+              <span class="chart-icon">📝</span>
+              Análise Semântica de Conteúdo
+            </h3>
+            <div class="chart-wrapper" style="position: relative; height: 320px; width: 100%; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 0.75rem; padding: 1rem; border: 1px solid #cbd5e1;">
+              <canvas id="contentAnalysisChart"></canvas>
+            </div>
+            <div class="chart-footer" style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #cbd5e1; text-align: center;">
+              <span class="chart-info" style="font-size: 0.8rem; color: #64748b; font-style: italic;">🧠 Sentimentos, tópicos e níveis de leitura</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Indicador de Loading -->
+        <div id="analyticsLoading" class="loading-indicator" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 4rem; background: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0;">
+          <div class="loading-spinner" style="width: 50px; height: 50px; border: 4px solid #cbd5e1; border-top: 4px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;"></div>
+          <p class="loading-text" style="color: #475569; font-size: 1.1rem; font-weight: 500; margin-bottom: 1rem;">Carregando analytics...</p>
+          <div class="loading-progress" style="width: 200px; height: 4px; background: #cbd5e1; border-radius: 0.25rem; overflow: hidden;">
+            <div class="progress-bar" style="height: 100%; background: linear-gradient(90deg, #2563eb, #0891b2); border-radius: 0.25rem; animation: progress 2s ease-in-out infinite;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scraping View -->
+      <div id="scraping" class="view-content">
+        <div class="view-header">
+          <h1>🎯 Sistema de Scraping</h1>
+          <p>Capture e indexe sites automaticamente</p>
+        </div>
+        
+        <div class="scraping-interface">
+          <!-- Capture Form Section -->
+          <section class="capture-section">
+            <div class="section-header">
+              <h3>📥 Adicionar URL para Captura</h3>
+              <p>Insira URLs para serem capturadas e indexadas no sistema</p>
+            </div>
+            
+            <form id="captureForm" class="capture-form">
+              <div class="form-row">
+                <div class="form-group url-group">
+                  <label for="urlInput">URL do Site:</label>
+                  <input 
+                    type="url" 
+                    id="urlInput" 
+                    class="form-input url-input" 
+                    placeholder="https://exemplo.com"
+                    required
+                  >
+                </div>
+                
+                <div class="form-group priority-group">
+                  <label for="prioritySelect">Prioridade:</label>
+                  <select id="prioritySelect" class="form-select">
+                    <option value="normal">Normal</option>
+                    <option value="high">Alta</option>
+                    <option value="low">Baixa</option>
+                  </select>
+                </div>
+                
+                <div class="form-group button-group">
+                  <button type="submit" id="captureButton" class="btn btn-primary">
+                    🎯 Adicionar à Fila
+                  </button>
+                </div>
+              </div>
+              
+
+            </form>
+          </section>
+
+          <!-- Queue Status Section -->
+          <section class="queue-status-section">
+            <div class="section-header">
+              <h3>📋 Status da Fila de Captura</h3>
+              <p>Monitoramento em tempo real do processo de scraping</p>
+            </div>
+            
+            <div class="status-grid">
+              <div class="status-card">
+                <div class="card-header">
+                  <h4>📊 Estatísticas da Fila</h4>
+                </div>
+                <div class="card-content">
+                  <div class="status-item">
+                    <span class="status-label">Total na Fila:</span>
+                    <span class="status-value" id="queueLength">0</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Processando:</span>
+                    <span class="status-value" id="isCapturing">Não</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Prioridade Alta:</span>
+                    <span class="status-value" id="highPriority">0</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Links Descobertos:</span>
+                    <span class="status-value" id="discoveredLinks">0</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="status-card">
+                <div class="card-header">
+                  <h4>🎛️ Controles da Fila</h4>
+                </div>
+                <div class="card-content">
+                  <div class="button-group">
+                    <button id="startProcessingBtn" class="btn btn-success">▶️ Iniciar</button>
+                    <button id="stopProcessingBtn" class="btn btn-warning">⏹️ Parar</button>
+                    <button id="clearQueueBtn" class="btn btn-danger">🗑️ Limpar Fila</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Queue List -->
+            <div class="queue-list-section">
+              <h4>📋 Itens na Fila</h4>
+              <div class="queue-list" id="queueList">
+                <div class="no-items">
+                  <span class="no-items-icon">📋</span>
+                  <p>Nenhum item na fila</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Queue List Section -->
+          <section class="queue-list-section">
+            <div class="section-header">
+              <h3>📋 Lista da Fila de Captura</h3>
+              <p>Visualize e gerencie os itens aguardando captura</p>
+            </div>
+            
+            <div id="queueList" class="queue-list">
+              <div class="empty-queue">
+                <span class="empty-icon">📋</span>
+                <p>Fila vazia - Adicione URLs para começar</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Statistics Section -->
+          <section class="stats-section">
+            <div class="section-header">
+              <h3>📊 Estatísticas de Scraping</h3>
+              <p>Métricas e performance do sistema de captura</p>
+            </div>
+            
+            <div id="scrapingStats" class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">📄</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="totalPages">0</div>
+                  <div class="stat-label">Total de Páginas</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="capturedPages">0</div>
+                  <div class="stat-label">Páginas Capturadas</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">❌</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="failedPages">0</div>
+                  <div class="stat-label">Páginas com Erro</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-content">
+                  <div class="stat-number" id="successRate">0%</div>
+                  <div class="stat-label">Taxa de Sucesso</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+
+          <!-- Recent Activity Section -->
+          <section class="activity-section">
+            <div class="section-header">
+              <h3>📅 Atividade Recente</h3>
+              <p>Histórico das últimas capturas realizadas</p>
+            </div>
+            
+            <div id="recentActivity" class="activity-list">
+              <div class="empty-activity">
+                <span class="empty-icon">📅</span>
+                <p>Nenhuma atividade recente</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Settings View -->
+      <div id="settings" class="view-content">
+        <!-- Hero Section com Background Animado -->
+        <div class="settings-hero">
+          <div class="hero-background">
+            <div class="floating-shapes">
+              <div class="shape shape-1"></div>
+              <div class="shape shape-2"></div>
+              <div class="shape shape-3"></div>
+              <div class="shape shape-4"></div>
+            </div>
+          </div>
+          
+          <div class="hero-content">
+            <div class="hero-icon">
+              <div class="icon-glow">
+                <span class="icon-emoji">⚙️</span>
+              </div>
+            </div>
+            
+            <div class="hero-text">
+              <h1 class="hero-title">Configurações</h1>
+              <p class="hero-subtitle">Personalize sua experiência e gerencie dados</p>
+              <div class="hero-stats">
+                <div class="stat-badge">
+                  <span class="stat-icon">💾</span>
+                  <span class="stat-text">Armazenamento</span>
+                </div>
+                <div class="stat-badge">
+                  <span class="stat-icon">📊</span>
+                  <span class="stat-text">Dados</span>
+                </div>
+                <div class="stat-badge">
+                  <span class="stat-icon">🔒</span>
+                  <span class="stat-text">Segurança</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="hero-actions">
+              <button class="hero-btn primary" onclick="toggleSettingsView()">
+                <span class="btn-icon">👁️</span>
+                <span class="btn-text">Alternar Visualização</span>
+              </button>
+              <button class="hero-btn secondary" onclick="refreshSettings()">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">Atualizar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Dashboard Stats -->
+        <div class="stats-dashboard">
+          <div class="stats-header">
+            <h3>📊 Visão Geral do Sistema</h3>
+            <p>Estatísticas em tempo real dos seus dados</p>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card primary">
+              <div class="stat-visual">
+                <div class="stat-circle">
+                  <svg class="stat-progress" viewBox="0 0 36 36">
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path class="progress-path" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  </svg>
+                  <div class="stat-number" id="storageUsed">0</div>
+                  <div class="stat-unit">MB</div>
+                </div>
+              </div>
+              <div class="stat-info">
+                <h4>Armazenamento</h4>
+                <p>Espaço utilizado</p>
+                <div class="stat-bar">
+                  <div class="bar-fill" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="stat-card success">
+              <div class="stat-visual">
+                <div class="stat-icon-large">📄</div>
+                <div class="stat-number" id="totalPages">0</div>
+              </div>
+              <div class="stat-info">
+                <h4>Páginas</h4>
+                <p>Capturadas</p>
+                <div class="stat-trend up">
+                  <span class="trend-icon">↗️</span>
+                  <span class="trend-text">+12%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="stat-card info">
+              <div class="stat-visual">
+                <div class="stat-icon-large">🔗</div>
+                <div class="stat-number" id="totalLinks">0</div>
+              </div>
+              <div class="stat-info">
+                <h4>Links</h4>
+                <p>Indexados</p>
+                <div class="stat-trend up">
+                  <span class="trend-icon">↗️</span>
+                  <span class="trend-text">+8%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="stat-card warning">
+              <div class="stat-visual">
+                <div class="stat-icon-large">🌐</div>
+                <div class="stat-number" id="uniqueDomains">0</div>
+              </div>
+              <div class="stat-info">
+                <h4>Domínios</h4>
+                <p>Únicos</p>
+                <div class="stat-trend stable">
+                  <span class="trend-icon">→</span>
+                  <span class="trend-text">Estável</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Settings Navigation -->
+        <div class="settings-nav">
+          <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="general">
+              <span class="tab-icon">🔧</span>
+              <span class="tab-text">Geral</span>
+            </button>
+            <button class="nav-tab" data-tab="data">
+              <span class="tab-icon">💾</span>
+              <span class="tab-text">Dados</span>
+            </button>
+            <button class="nav-tab" data-tab="tools">
+              <span class="tab-icon">🗄️</span>
+              <span class="tab-text">Ferramentas</span>
+            </button>
+            <button class="nav-tab" data-tab="performance">
+              <span class="tab-icon">⚡</span>
+              <span class="tab-text">Performance</span>
+            </button>
+            <button class="nav-tab" data-tab="security">
+              <span class="tab-icon">🔒</span>
+              <span class="tab-text">Segurança</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Settings Content -->
+        <div class="settings-content">
+          <!-- General Settings Tab -->
+          <div class="settings-tab active" id="general-tab">
+            <div class="tab-header">
+              <h2>🔧 Configurações Gerais</h2>
+              <p>Preferências básicas do aplicativo</p>
+            </div>
+            
+            <div class="settings-grid">
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🔄</div>
+                  <div class="setting-title">
+                    <h3>Sincronização Automática</h3>
+                    <p>Sincroniza dados automaticamente com o servidor</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="autoSync">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🚀</div>
+                  <div class="setting-title">
+                    <h3>Visualização Inicial</h3>
+                    <p>Página que será exibida ao abrir o aplicativo</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="select-wrapper">
+                    <select id="startupView" class="modern-select">
+                      <option value="dashboard">📊 Dashboard</option>
+                      <option value="search">🔍 Busca</option>
+                      <option value="analytics">📈 Analytics</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🎨</div>
+                  <div class="setting-title">
+                    <h3>Tema Preferido</h3>
+                    <p>Aparência visual do aplicativo</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="theme-selector">
+                    <button class="theme-option active" data-theme="auto">
+                      <span class="theme-icon">🎨</span>
+                      <span class="theme-name">Automático</span>
+                    </button>
+                    <button class="theme-option" data-theme="light">
+                      <span class="theme-icon">☀️</span>
+                      <span class="theme-name">Claro</span>
+                    </button>
+                    <button class="theme-option" data-theme="dark">
+                      <span class="theme-icon">🌙</span>
+                      <span class="theme-name">Escuro</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🔔</div>
+                  <div class="setting-title">
+                    <h3>Notificações</h3>
+                    <p>Receba alertas sobre atividades importantes</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="notifications" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Data Settings Tab -->
+          <div class="settings-tab" id="data-tab">
+            <div class="tab-header">
+              <h2>💾 Configurações de Dados</h2>
+              <p>Gerenciamento de armazenamento e limpeza</p>
+            </div>
+            
+            <div class="settings-grid">
+              <div class="setting-card wide">
+                <div class="setting-header">
+                  <div class="setting-icon">📏</div>
+                  <div class="setting-title">
+                    <h3>Tamanho Máximo de Armazenamento</h3>
+                    <p>Limite de espaço em disco para dados</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="range-control">
+                    <div class="range-display">
+                      <input type="number" id="maxStorageSize" class="range-input" value="1000" min="100" max="10000">
+                      <span class="range-unit">MB</span>
+                    </div>
+                    <input type="range" id="storageRange" class="modern-range" min="100" max="10000" value="1000">
+                    <div class="range-labels">
+                      <span>100 MB</span>
+                      <span>10 GB</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🧹</div>
+                  <div class="setting-title">
+                    <h3>Limpeza Automática</h3>
+                    <p>Remove dados antigos automaticamente</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="autoCleanup" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-card wide">
+                <div class="setting-header">
+                  <div class="setting-icon">⏰</div>
+                  <div class="setting-title">
+                    <h3>Intervalo de Limpeza</h3>
+                    <p>Frequência da limpeza automática</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="range-control">
+                    <div class="range-display">
+                      <input type="number" id="cleanupInterval" class="range-input" value="30" min="7" max="365">
+                      <span class="range-unit">dias</span>
+                    </div>
+                    <input type="range" id="cleanupRange" class="modern-range" min="7" max="365" value="30">
+                    <div class="range-labels">
+                      <span>7 dias</span>
+                      <span>1 ano</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🔒</div>
+                  <div class="setting-title">
+                    <h3>Criptografia de Dados</h3>
+                    <p>Protege dados sensíveis com criptografia</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="dataEncryption">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Database Tools Tab -->
+          <div class="settings-tab" id="tools-tab">
+            <div class="tab-header">
+              <h2>🗄️ Ferramentas de Banco de Dados</h2>
+              <p>Gerenciamento e análise do IndexedDB</p>
+            </div>
+            
+            <div class="tools-grid">
+              <div class="tool-card">
+                <div class="tool-icon">📊</div>
+                <div class="tool-content">
+                  <h3>Schema Viewer</h3>
+                  <p>Visualize e exporte a estrutura do IndexedDB</p>
+                  <button class="tool-btn primary" onclick="openSchemaViewer()">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-text">Abrir</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="tool-card">
+                <div class="tool-icon">📥</div>
+                <div class="tool-content">
+                  <h3>Exportar Dados</h3>
+                  <p>Faça backup dos dados armazenados</p>
+                  <button class="tool-btn success" onclick="exportDatabaseData()">
+                    <span class="btn-icon">📥</span>
+                    <span class="btn-text">Exportar</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <div class="tool-content">
+                  <h3>Status do Banco</h3>
+                  <p>Verifique o estado atual do IndexedDB</p>
+                  <button class="tool-btn info" onclick="checkDatabaseStatus()">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-text">Verificar</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="tool-card">
+                <div class="tool-icon">🔄</div>
+                <div class="tool-content">
+                  <h3>Otimização</h3>
+                  <p>Otimiza performance e espaço em disco</p>
+                  <button class="tool-btn warning" onclick="optimizeDatabase()">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Otimizar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Performance Settings Tab -->
+          <div class="settings-tab" id="performance-tab">
+            <div class="tab-header">
+              <h2>⚡ Configurações de Performance</h2>
+              <p>Otimize a velocidade e eficiência do aplicativo</p>
+            </div>
+            
+            <div class="settings-grid">
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🚀</div>
+                  <div class="setting-title">
+                    <h3>Cache Inteligente</h3>
+                    <p>Armazena dados frequentemente acessados</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="cacheEnabled" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">📱</div>
+                  <div class="setting-title">
+                    <h3>Sincronização em Background</h3>
+                    <p>Sincroniza dados sem interromper o uso</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="backgroundSync" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🎯</div>
+                  <div class="setting-title">
+                    <h3>Modo de Performance</h3>
+                    <p>Prioriza velocidade sobre recursos visuais</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="select-wrapper">
+                    <select id="performanceMode" class="modern-select">
+                      <option value="balanced">⚖️ Equilibrado</option>
+                      <option value="performance">🚀 Performance</option>
+                      <option value="quality">🎨 Qualidade</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Security Settings Tab -->
+          <div class="settings-tab" id="security-tab">
+            <div class="tab-header">
+              <h2>🔒 Configurações de Segurança</h2>
+              <p>Proteja seus dados e privacidade</p>
+            </div>
+            
+            <div class="settings-grid">
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🔐</div>
+                  <div class="setting-title">
+                    <h3>Autenticação</h3>
+                    <p>Requer senha para alterações críticas</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="requireAuth">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🛡️</div>
+                  <div class="setting-title">
+                    <h3>Backup Automático</h3>
+                    <p>Faz backup automático dos dados</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="autoBackup" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="setting-card">
+                <div class="setting-header">
+                  <div class="setting-icon">🚨</div>
+                  <div class="setting-title">
+                    <h3>Alertas de Segurança</h3>
+                    <p>Notifica sobre atividades suspeitas</p>
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <label class="switch">
+                    <input type="checkbox" id="securityAlerts" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Bar -->
+        <div class="action-bar">
+          <div class="action-left">
+            <button class="action-btn secondary" id="resetSettingsBtn">
+              <span class="btn-icon">🔄</span>
+              <span class="btn-text">Restaurar Padrões</span>
+            </button>
+            <button class="action-btn danger" id="clearDataBtn">
+              <span class="btn-icon">🗑️</span>
+              <span class="btn-text">Limpar Dados</span>
+            </button>
+          </div>
+          
+          <div class="action-center">
+            <div class="save-indicator" id="saveIndicator">
+              <span class="indicator-icon">💾</span>
+              <span class="indicator-text">Alterações não salvas</span>
+            </div>
+          </div>
+          
+          <div class="action-right">
+            <button class="action-btn primary" id="saveSettingsBtn">
+              <span class="btn-icon">💾</span>
+              <span class="btn-text">Salvar Configurações</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-content" id="modalContent">
+        <!-- Modal content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div id="loadingIndicator" class="loading-indicator hidden">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Carregando...</p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/search.js"></script>
+
+  <script src="js/views/analytics.js"></script>
+
+  <script src="js/views/settings.js"></script>
+  <script src="js/scraping/buscalogo-api-client.js"></script>
+  <script src="js/scraping/scraper.js"></script>
+  <script src="js/scraping/scraping-controls.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/loading.js"></script>
+  <script src="js/utils/storage.js"></script>
+  <script src="js/utils/network.js"></script>
+</body>
+</html>
