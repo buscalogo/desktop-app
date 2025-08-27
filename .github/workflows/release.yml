@@ -105,11 +105,9 @@ jobs:
         with:
           files: |
             artifacts/linux-release/*.AppImage
-            artifacts/linux-release/*.yml
+            artifacts/linux-release/latest-linux.yml
             artifacts/windows-release/*.exe
-            artifacts/windows-release/*.blockmap
             artifacts/macos-release/*.zip
-            artifacts/macos-release/*.blockmap
           draft: false
           prerelease: false
           generate_release_notes: true

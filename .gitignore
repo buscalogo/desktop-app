@@ -7,11 +7,17 @@ yarn-error.log*
 # Build outputs
 dist/
 build/
-out/
+*.AppImage
+*.exe
+*.zip
+*.dmg
+*.blockmap
+builder-debug.yml
+latest-*.yml
 
 # Electron
-app/
-release/
+.electron/
+.electron-builder/
 
 # OS generated files
 .DS_Store
@@ -63,6 +69,10 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
-# Temporary folders
-tmp/
-temp/
+# Puppeteer
+.cache/
+puppeteer/
+
+# Temporary files
+*.tmp
+*.temp

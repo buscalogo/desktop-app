@@ -73,8 +73,9 @@ jobs:
             dist/*.AppImage
             dist/*.exe
             dist/*.zip
-            dist/*.yml
-            dist/*.blockmap
+            dist/latest-linux.yml
+            dist/latest-win.yml
+            dist/latest-mac.yml
           retention-days: 30
 
       - name: 📊 Build info
