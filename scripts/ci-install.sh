@@ -8,7 +8,7 @@ set -e
 echo "🔧 Instalando dependências para CI/CD..."
 
 # Configurar variáveis de ambiente para Puppeteer
-export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com
 export PUPPETEER_CHROMIUM_REVISION=121.0.6167.139
 export PUPPETEER_CACHE_DIR=~/.cache/puppeteer
@@ -29,7 +29,13 @@ else
     
     # Tentar instalação limpa
     echo "📦 Tentando instalação limpa..."
-    npm install --no-audit --no-fund
+    if npm install --no-audit --no-fund; then
+        echo "✅ Instalação limpa bem-sucedida!"
+    else
+        echo "⚠️ Instalação limpa falhou, tentando sem Puppeteer..."
+        bash scripts/install-no-puppeteer.sh
+        exit $?
+    fi
     
     # Executar postinstall se existir
     if npm run | grep -q "postinstall"; then

@@ -51,7 +51,7 @@
     "electron-store": "^8.1.0",
     "electron-updater": "^6.1.8",
     "cheerio": "^1.0.0-rc.12",
-    "puppeteer": "^21.5.2"
+    "puppeteer": "^24.9.0"
   },
   "build": {
     "appId": "com.buscalogo.desktop",

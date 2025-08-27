@@ -1,4 +1,4 @@
-# Configurações do npm para otimizar builds
+# Configurações do npm para CI/CD
 registry=https://registry.npmjs.org/
 save-exact=true
 package-lock=true
@@ -6,7 +6,7 @@ package-lock=true
 # Configurações específicas para Electron
 # electron_mirror=https://npm.taobao.org/mirrors/electron/
 
-# Configurações específicas para Puppeteer
+# Configurações específicas para Puppeteer em CI
 puppeteer_skip_chromium_download=true
 puppeteer_download_base_url=https://storage.googleapis.com
 puppeteer_chromium_revision=121.0.6167.139
@@ -21,3 +21,6 @@ fetch-retry-maxtimeout=60000
 # Configurações de segurança
 audit=false
 fund=false
+
+# Configurações específicas para CI
+ignore-scripts=false
