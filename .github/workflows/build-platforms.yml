@@ -1,0 +1,80 @@
+name: 🏗️ Platform-Specific Builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'linux'
+        type: choice
+        options:
+          - linux
+          - win
+          - mac
+      version:
+        description: 'Version to build'
+        required: false
+        type: string
+
+env:
+  NODE_VERSION: '20'
+  ELECTRON_CACHE: '~/.cache/electron'
+  ELECTRON_BUILDER_CACHE: '~/.cache/electron-builder'
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'false'
+  PUPPETEER_DOWNLOAD_HOST: 'https://storage.googleapis.com'
+  PUPPETEER_CACHE_DIR: '~/.cache/puppeteer'
+
+jobs:
+  build:
+    name: 🏗️ Build ${{ github.event.inputs.platform || 'linux' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ${{ github.event.inputs.platform == 'win' && 'windows-latest' || github.event.inputs.platform == 'mac' && 'macos-latest' || 'ubuntu-latest' }}
+        platform: ${{ github.event.inputs.platform || 'linux' }}
+        build-command: ${{ 'build:' + (github.event.inputs.platform || 'linux') }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Clear npm cache
+        run: npm cache clean --force
+
+      - name: 🔧 Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit || bash scripts/install-deps.sh
+        env:
+          ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
+          ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
+          PUPPETEER_DOWNLOAD_HOST: ${{ env.PUPPETEER_DOWNLOAD_HOST }}
+          PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
+
+      - name: 🏗️ Build application
+        run: npm run ${{ matrix.build-command }}
+        env:
+          ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
+          ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+
+      - name: 📁 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build-${{ github.sha }}
+          path: dist/
+          retention-days: 30
+
+      - name: 📊 Build info
+        run: |
+          echo "🏗️ Build completed for ${{ matrix.platform }}"
+          echo "📦 Build artifacts:"
+          ls -la dist/
+          echo "📏 Build size:"
+          du -sh dist/

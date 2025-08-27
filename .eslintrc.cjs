@@ -14,6 +14,13 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'prefer-const': 'error',
-    'no-var': 'error'
-  }
+    'no-var': 'error',
+    'no-unused-vars': 'warn',
+    'no-undef': 'error'
+  },
+  ignorePatterns: [
+    'dist/',
+    'node_modules/',
+    '*.min.js'
+  ]
 }
