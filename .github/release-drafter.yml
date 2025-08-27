@@ -1,0 +1,116 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: '🔧 Maintenance'
+    labels:
+      - 'chore'
+      - 'dependencies'
+      - 'maintenance'
+  - title: '📚 Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
+  - title: '🧪 Testing'
+    labels:
+      - 'test'
+      - 'testing'
+  - title: '⚡ Performance'
+    labels:
+      - 'performance'
+      - 'perf'
+  - title: '♻️ Refactoring'
+    labels:
+      - 'refactor'
+      - 'refactoring'
+  - title: '🚨 Breaking Changes'
+    labels:
+      - 'breaking'
+      - 'breaking-change'
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&' # You can add # and @ to disable escaping, but adds disallowed characters to titles
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+      - 'breaking'
+      - 'breaking-change'
+  minor:
+    labels:
+      - 'minor'
+      - 'feature'
+      - 'enhancement'
+  patch:
+    labels:
+      - 'patch'
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+      - 'chore'
+      - 'dependencies'
+      - 'maintenance'
+      - 'documentation'
+      - 'docs'
+      - 'test'
+      - 'testing'
+      - 'performance'
+      - 'perf'
+      - 'refactor'
+      - 'refactoring'
+  default: patch
+
+template: |
+  ## 🚀 BuscaLogo Desktop $RESOLVED_VERSION
+
+  $CHANGES
+
+  ## 📦 Downloads
+
+  ### Linux
+  - **AppImage (64-bit)**: [BuscaLogo-$RESOLVED_VERSION.AppImage](https://github.com/buscalogo/desktop-app/releases/download/v$RESOLVED_VERSION/BuscaLogo-$RESOLVED_VERSION.AppImage)
+
+  ### Windows
+  - **Installer (64-bit)**: [BuscaLogo-$RESOLVED_VERSION.exe](https://github.com/buscalogo/desktop-app/releases/download/v$RESOLVED_VERSION/BuscaLogo-$RESOLVED_VERSION.exe)
+
+  ### macOS
+  - **DMG (Intel + Apple Silicon)**: [BuscaLogo-$RESOLVED_VERSION.dmg](https://github.com/buscalogo/desktop-app/releases/download/v$RESOLVED_VERSION/BuscaLogo-$RESOLVED_VERSION.dmg)
+
+  ## 🔧 Instalação
+
+  ### Linux
+  ```bash
+  chmod +x BuscaLogo-$RESOLVED_VERSION.AppImage
+  ./BuscaLogo-$RESOLVED_VERSION.AppImage
+  ```
+
+  ### Windows
+  Execute o arquivo `.exe` e siga as instruções do instalador.
+
+  ### macOS
+  Abra o arquivo `.dmg` e arraste o BuscaLogo para a pasta Applications.
+
+  ## 📋 Changelog Completo
+
+  Veja o [CHANGELOG.md](https://github.com/buscalogo/desktop-app/blob/main/CHANGELOG.md) para detalhes completos de todas as versões.
+
+  ## 🐛 Reportar Bugs
+
+  Use as [GitHub Issues](https://github.com/buscalogo/desktop-app/issues) para reportar bugs ou solicitar funcionalidades.
+
+  ## 🤝 Contribuir
+
+  Contribuições são bem-vindas! Veja o [CONTRIBUTING.md](https://github.com/buscalogo/desktop-app/blob/main/CONTRIBUTING.md) para mais informações.
+
+  ---
+
+  **Desenvolvido com ❤️ pela equipe BuscaLogo**

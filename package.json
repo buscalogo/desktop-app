@@ -17,7 +17,16 @@
     "dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "release": "npm run build && npm run release:github",
+    "release:github": "gh release create",
+    "release:patch": "npm version patch && npm run release",
+    "release:minor": "npm version minor && npm run release",
+    "release:major": "npm version major && npm run release",
+    "prerelease": "npm run build && gh release create --prerelease",
+    "draft": "npm run build && gh release create --draft",
+    "publish": "npm run build && gh release create --latest",
+    "update-version": "node scripts/update-version.js"
   },
   "keywords": [
     "electron",
@@ -59,6 +68,10 @@
       {
         "from": "assets/",
         "to": "assets/"
+      },
+      {
+        "from": "src/renderer/assets/",
+        "to": "renderer/assets/"
       }
     ],
     "win": {
@@ -86,5 +99,17 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     }
+  },
+  "publish": {
+    "provider": "github",
+    "owner": "buscalogo",
+    "repo": "desktop-app",
+    "private": false,
+    "releaseType": "release",
+    "draft": false,
+    "prerelease": false,
+    "generateReleaseNotes": true,
+    "updateProvider": "github",
+    "updateRepo": "buscalogo/desktop-app"
   }
 }

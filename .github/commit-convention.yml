@@ -1,0 +1,53 @@
+# Conventional Commits Configuration
+# https://www.conventionalcommits.org/
+
+# Tipos de commit permitidos
+types:
+  - feat: A new feature
+  - fix: A bug fix
+  - docs: Documentation only changes
+  - style: Changes that do not affect the meaning of the code
+  - refactor: A code change that neither fixes a bug nor adds a feature
+  - perf: A code change that improves performance
+  - test: Adding missing tests or correcting existing tests
+  - chore: Changes to the build process or auxiliary tools
+  - ci: Changes to CI configuration files and scripts
+  - build: Changes that affect the build system or external dependencies
+  - revert: Reverts a previous commit
+
+# Escopo opcional para commits
+scopes:
+  - desktop: Changes to desktop app functionality
+  - ui: User interface changes
+  - system-tray: System tray functionality
+  - build: Build system changes
+  - electron: Electron-specific changes
+  - icons: Icon and asset changes
+  - docs: Documentation changes
+  - ci: CI/CD changes
+  - release: Release process changes
+
+# Descrição obrigatória
+description: true
+
+# Corpo opcional
+body: false
+
+# Footer opcional
+footer: false
+
+# Breaking changes
+breaking: true
+
+# Exemplos de commits válidos
+examples:
+  - "feat(desktop): add system tray functionality"
+  - "fix(ui): resolve dark mode toggle issue"
+  - "docs: update installation instructions"
+  - "chore(build): update electron-builder configuration"
+  - "ci: add GitHub Actions workflow"
+  - "feat(system-tray): implement minimize to tray"
+  - "fix(electron): resolve window closing issue"
+  - "refactor(ui): improve component structure"
+  - "perf(desktop): optimize startup time"
+  - "test: add unit tests for core functionality"

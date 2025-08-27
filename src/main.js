@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, shell, Tray, nativeImage } = require('electron');
 const path = require('path');
 const isDev = process.argv.includes('--dev');
 
@@ -6,8 +6,12 @@ const isDev = process.argv.includes('--dev');
 const APP_NAME = 'BuscaLogo Desktop';
 const APP_VERSION = '1.0.0';
 
+// Flag para controlar quando a aplicação está realmente saindo
+app.isQuiting = false;
+
 // Janela principal
 let mainWindow;
+let tray = null;
 
 /**
  * Cria a janela principal do aplicativo
@@ -25,7 +29,7 @@ function createMainWindow() {
       enableRemoteModule: false,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, '../assets/icon.png'),
+    icon: path.join(__dirname, '..', 'assets', 'icon.png'),
     title: APP_NAME,
     show: false,
     titleBarStyle: 'default',
@@ -36,21 +40,36 @@ function createMainWindow() {
   });
 
   // Carrega o arquivo HTML principal
+  console.log('📁 Carregando arquivo HTML...');
   mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
+  console.log('📄 Arquivo HTML carregado');
 
   // Mostra a janela quando estiver pronta
   mainWindow.once('ready-to-show', () => {
+    console.log('🎯 Janela pronta para exibir');
     mainWindow.show();
+    console.log('✅ Janela exibida com sucesso');
     
     // Abre DevTools em modo de desenvolvimento
     if (isDev) {
       mainWindow.webContents.openDevTools();
+      console.log('🔧 DevTools aberto');
     }
   });
 
   // Evento quando a janela é fechada
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  // Evento quando a janela está sendo fechada (antes de fechar)
+  mainWindow.on('close', (event) => {
+    // Se não for uma saída forçada (Cmd+Q, Ctrl+Q), apenas esconde a janela
+    if (!app.isQuiting) {
+      event.preventDefault();
+      mainWindow.hide();
+      return false;
+    }
   });
 
   // Previne navegação para URLs externas
@@ -70,6 +89,101 @@ function createMainWindow() {
   });
 
   console.log('🚀 Janela principal criada');
+}
+
+/**
+ * Cria o system tray (ícone na bandeja do sistema)
+ */
+function createTray() {
+  // Cria o ícone do tray usando o ícone específico para tray
+  const iconPath = path.join(__dirname, '..', 'assets', 'tray-icon.png');
+  const trayIcon = nativeImage.createFromPath(iconPath);
+  
+  // Cria o tray com o ícone específico
+  tray = new Tray(trayIcon);
+  tray.setToolTip(APP_NAME);
+  
+  // Cria o menu de contexto do tray
+  const trayMenu = Menu.buildFromTemplate([
+    {
+      label: 'Mostrar BuscaLogo',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    {
+      label: 'Nova Busca',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.webContents.send('menu-action', 'new-search');
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    {
+      label: 'Dashboard',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.webContents.send('menu-action', 'open-dashboard');
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Preferências',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.webContents.send('menu-action', 'open-preferences');
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    {
+      type: 'separator'
+    },
+            {
+          label: 'Sair',
+          click: () => {
+            app.isQuiting = true;
+            app.quit();
+          }
+        }
+  ]);
+  
+  tray.setContextMenu(trayMenu);
+  
+  // Evento de clique no ícone do tray
+  tray.on('click', () => {
+    if (mainWindow) {
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    }
+  });
+  
+  // Evento de clique duplo no ícone do tray (macOS)
+  if (process.platform === 'darwin') {
+    tray.on('double-click', () => {
+      if (mainWindow) {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    });
+  }
+  
+  console.log('🎯 System tray criado');
 }
 
 /**
@@ -111,6 +225,7 @@ function createMenu() {
           label: 'Sair',
           accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
           click: () => {
+            app.isQuiting = true;
             app.quit();
           }
         }
@@ -349,6 +464,7 @@ app.whenReady().then(() => {
   console.log('🚀 BuscaLogo Desktop iniciando...');
   
   createMainWindow();
+  createTray();
   createMenu();
   setupIpcHandlers();
   
@@ -360,7 +476,17 @@ app.on('window-all-closed', () => {
   // No macOS, é comum para aplicativos e suas barras de menu
   // permanecerem ativos até que o usuário saia explicitamente com Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit();
+    // Em vez de fechar, apenas esconde a janela (a aplicação continua rodando no tray)
+    if (mainWindow) {
+      mainWindow.hide();
+    }
+  }
+});
+
+// Limpa o tray quando a aplicação sair
+app.on('before-quit', () => {
+  if (tray) {
+    tray.destroy();
   }
 });
 
@@ -373,12 +499,18 @@ app.on('activate', () => {
 });
 
 // Previne múltiplas instâncias do app
-const gotTheLock = app.requestSingleInstanceLock();
+let gotTheLock = false;
 
-if (!gotTheLock) {
-  console.log('⚠️ Outra instância do BuscaLogo já está rodando');
-  app.quit();
-} else {
+app.on('ready', () => {
+  gotTheLock = app.requestSingleInstanceLock();
+  
+  if (!gotTheLock) {
+    console.log('⚠️ Outra instância do BuscaLogo já está rodando');
+    app.isQuiting = true;
+    app.quit();
+    return;
+  }
+  
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     // Alguém tentou executar uma segunda instância, devemos focar nossa janela
     if (mainWindow) {
@@ -386,7 +518,7 @@ if (!gotTheLock) {
       mainWindow.focus();
     }
   });
-}
+});
 
 // Tratamento de erros não capturados
 process.on('uncaughtException', (error) => {

@@ -1,0 +1,143 @@
+name: 🔍 CI - BuscaLogo Desktop
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  test:
+    name: 🧪 Test and Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Lint code
+        run: npm run lint
+
+      - name: 🔍 Lint fix (check only)
+        run: npm run lint:fix --dry-run
+
+      - name: 🏗️ Build validation
+        run: npm run build:linux
+
+      - name: 📁 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build-validation
+          path: dist/
+          retention-days: 7
+
+  security:
+    name: 🛡️ Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🔒 Audit dependencies
+        run: npm audit --audit-level=moderate
+
+      - name: 🔍 Check for known vulnerabilities
+        run: |
+          if npm audit --audit-level=high; then
+            echo "✅ No high severity vulnerabilities found"
+          else
+            echo "⚠️ High severity vulnerabilities found"
+            exit 1
+          fi
+
+  build-matrix:
+    name: 🏗️ Build Matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            build-command: build:linux
+          - os: windows-latest
+            platform: win
+            build-command: build:win
+          - os: macos-latest
+            platform: mac
+            build-command: build:mac
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: |
+          npm ci
+          npm run postinstall
+
+      - name: 🏗️ Build application
+        run: npm run ${{ matrix.build-command }}
+
+      - name: 📁 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build
+          path: dist/
+          retention-days: 7
+
+  quality:
+    name: 📊 Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 📊 Check bundle size
+        run: |
+          npm run build:linux
+          echo "📦 Build size:"
+          du -sh dist/
+          ls -la dist/
+
+      - name: 🔍 Check for large files
+        run: |
+          find . -type f -size +10M -not -path "./node_modules/*" -not -path "./dist/*" | head -10

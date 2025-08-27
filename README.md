@@ -12,6 +12,7 @@ Aplicativo desktop nativo para o BuscaLogo, construído com Electron, oferecendo
 - **Busca Inteligente**: Sistema de busca avançado em todo o conteúdo
 - **Temas**: Suporte a temas claro, escuro e automático
 - **Configurações Flexíveis**: Personalização completa do comportamento
+- **System Tray**: Execução em segundo plano com ícone na bandeja do sistema
 
 ## 🚀 Instalação
 
@@ -97,6 +98,30 @@ desktop-app/
 
 ### Configurações
 - Preferências gerais
+
+## 🚀 Sistema de Release
+
+O BuscaLogo Desktop possui um sistema completo de release automático integrado com GitHub Actions.
+
+### **Release Automático**
+```bash
+# Patch release (1.0.0 → 1.0.1)
+./scripts/release.sh --patch
+
+# Minor release (1.0.0 → 1.1.0)
+./scripts/release.sh --minor
+
+# Major release (1.0.0 → 2.0.0)
+./scripts/release.sh --major
+```
+
+### **Verificar Status**
+```bash
+./scripts/release.sh --check
+```
+
+### **Documentação Completa**
+Veja o [RELEASE_README.md](RELEASE_README.md) para informações detalhadas sobre o sistema de release.
 - Configurações P2P
 - Gerenciamento de dados
 
@@ -105,13 +130,53 @@ desktop-app/
 ### Scripts Disponíveis
 
 - `npm start` - Executa o aplicativo
+### **Desenvolvimento**
 - `npm run dev` - Executa em modo de desenvolvimento
-- `npm run build` - Constrói para produção
+- `npm run start` - Executa a aplicação
+- `npm run lint` - Executa linting
+- `npm run lint:fix` - Corrige problemas de linting
+
+### **Build**
+- `npm run build` - Constrói para todas as plataformas
 - `npm run build:win` - Constrói para Windows
 - `npm run build:mac` - Constrói para macOS
 - `npm run build:linux` - Constrói para Linux
-- `npm run lint` - Executa linting
-- `npm run lint:fix` - Corrige problemas de linting
+- `npm run pack` - Empacota sem distribuir
+
+### **Release**
+- `npm run release:patch` - Release patch (1.0.0 → 1.0.1)
+- `npm run release:minor` - Release minor (1.0.0 → 1.1.0)
+- `npm run release:major` - Release major (1.0.0 → 2.0.0)
+- `npm run draft` - Cria release draft
+- `npm run prerelease` - Cria prerelease
+- `npm run update-version` - Atualiza arquivos de versão
+
+### **Scripts Avançados**
+- `./scripts/release.sh --patch` - Release patch via script
+- `./scripts/release.sh --check` - Verifica status para release
+- `./scripts/update-version.js` - Atualiza versão em arquivos
+
+## 🎯 System Tray
+
+O BuscaLogo Desktop inclui um **system tray** que permite que a aplicação continue rodando em segundo plano:
+
+### **Funcionalidades**
+- **🔄 Minimização para Tray**: Feche a janela e a aplicação continua rodando
+- **🎯 Menu de Contexto**: Acesso rápido às funcionalidades principais
+- **⚡ Restauração Rápida**: Clique no ícone para restaurar a janela
+- **💾 Persistência**: Dados e estado são mantidos em segundo plano
+
+### **Como Usar**
+- **Minimizar**: Feche a janela principal (X)
+- **Restaurar**: Clique no ícone do tray
+- **Sair**: Use "Sair" no menu ou Ctrl+Q/Cmd+Q
+
+### **Suporte por Plataforma**
+- ✅ **Windows**: System tray funcional
+- ✅ **macOS**: System tray funcional  
+- ✅ **Linux**: System tray funcional
+
+*Para mais detalhes, consulte [TRAY_README.md](TRAY_README.md)*
 
 ### Tecnologias Utilizadas
 

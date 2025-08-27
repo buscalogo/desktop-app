@@ -1,0 +1,140 @@
+name: 🚀 Release BuscaLogo Desktop
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        default: 'patch'
+      prerelease:
+        description: 'Is this a prerelease?'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  ELECTRON_VERSION: '28'
+
+jobs:
+  release:
+    name: 🎯 Build and Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            artifact: AppImage
+          - os: windows-latest
+            platform: win
+            artifact: exe
+          - os: macos-latest
+            platform: mac
+            artifact: dmg
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: |
+          npm ci
+          npm run postinstall
+
+      - name: 🏗️ Build application
+        run: |
+          if [ "${{ matrix.platform }}" = "win" ]; then
+            npm run build:win
+          elif [ "${{ matrix.platform }}" = "mac" ]; then
+            npm run build:mac
+          else
+            npm run build:linux
+          fi
+
+      - name: 📁 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-builds
+          path: dist/
+          retention-days: 30
+
+      - name: 🏷️ Create Release
+        if: matrix.os == 'ubuntu-latest'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.AppImage
+            dist/*.exe
+            dist/*.dmg
+            dist/*.zip
+          generate_release_notes: true
+          prerelease: ${{ github.event.inputs.prerelease || contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+          draft: false
+          tag_name: ${{ github.ref_name }}
+          name: BuscaLogo Desktop ${{ github.ref_name }}
+          body: |
+            ## 🚀 BuscaLogo Desktop ${{ github.ref_name }}
+            
+            ### 📦 Downloads
+            - **Linux**: AppImage (64-bit)
+            - **Windows**: Installer (64-bit)
+            - **macOS**: DMG (Intel + Apple Silicon)
+            
+            ### 🔧 Instalação
+            - **Linux**: `chmod +x BuscaLogo-*.AppImage && ./BuscaLogo-*.AppImage`
+            - **Windows**: Execute o arquivo .exe
+            - **macOS**: Abra o arquivo .dmg e arraste para Applications
+            
+            ### 📋 Changelog
+            Veja o [CHANGELOG.md](https://github.com/buscalogo/desktop-app/blob/main/CHANGELOG.md) para detalhes completos.
+            
+            ### 🐛 Reportar Bugs
+            Use as [GitHub Issues](https://github.com/buscalogo/desktop-app/issues) para reportar bugs ou solicitar funcionalidades.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔄 Update version files
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          npm run update-version
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "chore: update version files for ${{ github.ref_name }}" || echo "No changes to commit"
+          git push origin main || echo "No changes to push"
+
+  notify:
+    name: 📢 Notify Release
+    needs: release
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: 📢 Release Status
+        run: |
+          if [ "${{ needs.release.result }}" == "success" ]; then
+            echo "✅ Release ${{ github.ref_name }} completed successfully!"
+          else
+            echo "❌ Release ${{ github.ref_name }} failed!"
+            exit 1
+          fi
