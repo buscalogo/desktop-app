@@ -17,11 +17,11 @@ export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com
 export PUPPETEER_CHROMIUM_REVISION=121.0.6167.139
 
-# Tentar instalação limpa com timeout
-echo "📦 Tentando instalação limpa..."
-timeout 600 npm install --no-audit --no-fund --prefer-offline || {
-    echo "⚠️ Instalação com timeout falhou, tentando sem timeout..."
-    npm install --no-audit --no-fund --prefer-offline
+# Tentar instalação limpa com --legacy-peer-deps
+echo "📦 Tentando instalação com --legacy-peer-deps..."
+timeout 600 npm install --no-audit --no-fund --prefer-offline --legacy-peer-deps || {
+    echo "⚠️ Instalação com --legacy-peer-deps falhou, tentando sem timeout..."
+    npm install --no-audit --no-fund --prefer-offline --legacy-peer-deps
 }
 
 # Executar postinstall se existir
