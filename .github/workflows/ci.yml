@@ -55,6 +55,7 @@ jobs:
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📁 Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -148,6 +149,7 @@ jobs:
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📁 Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -191,6 +193,7 @@ jobs:
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🔍 Check for large files
         run: |

@@ -43,7 +43,7 @@ module.exports = {
   },
   
   mac: {
-    target: 'zip',
+    target: 'dmg',
     icon: 'assets/icon.icns',
     category: 'public.app-category.productivity'
   },
@@ -68,10 +68,15 @@ module.exports = {
     createStartMenuShortcut: true
   },
   
-  // Configurações de publicação (desabilitadas para CI)
-  publish: null,
-  
-  // Configurações específicas para CI
-  buildDependenciesFromSource: false,
-  npmRebuild: false
+  // Configurações de publicação para releases
+  publish: {
+    provider: 'github',
+    owner: 'buscalogo',
+    repo: 'desktop-app',
+    private: false,
+    releaseType: 'release',
+    draft: false,
+    prerelease: false,
+    generateReleaseNotes: true
+  }
 };
