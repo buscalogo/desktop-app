@@ -61,7 +61,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-build-validation
-          path: dist/
+          path: |
+            dist/*.AppImage
+            dist/*.yml
+            dist/*.blockmap
           retention-days: 7
 
   security:
@@ -155,7 +158,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-build
-          path: dist/
+          path: |
+            dist/*.AppImage
+            dist/*.exe
+            dist/*.zip
+            dist/*.yml
+            dist/*.blockmap
           retention-days: 7
 
   quality:

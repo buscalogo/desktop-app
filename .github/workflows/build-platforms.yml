@@ -69,7 +69,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-build-${{ github.sha }}
-          path: dist/
+          path: |
+            dist/*.AppImage
+            dist/*.exe
+            dist/*.zip
+            dist/*.yml
+            dist/*.blockmap
           retention-days: 30
 
       - name: 📊 Build info

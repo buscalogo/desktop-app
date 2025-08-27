@@ -97,13 +97,19 @@ jobs:
         with:
           path: artifacts/
 
+      - name: 🧹 Prepare release files
+        run: bash scripts/prepare-release.sh
+
       - name: 🏷️ Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/linux-release/**/*
-            artifacts/windows-release/**/*
-            artifacts/macos-release/**/*
+            artifacts/linux-release/*.AppImage
+            artifacts/linux-release/*.yml
+            artifacts/windows-release/*.exe
+            artifacts/windows-release/*.blockmap
+            artifacts/macos-release/*.zip
+            artifacts/macos-release/*.blockmap
           draft: false
           prerelease: false
           generate_release_notes: true
