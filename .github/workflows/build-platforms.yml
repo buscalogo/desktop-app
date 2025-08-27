@@ -27,14 +27,10 @@ env:
   PUPPETEER_CACHE_DIR: '~/.cache/puppeteer'
 
 jobs:
-  build:
-    name: 🏗️ Build ${{ github.event.inputs.platform || 'linux' }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ${{ github.event.inputs.platform == 'win' && 'windows-latest' || github.event.inputs.platform == 'mac' && 'macos-latest' || 'ubuntu-latest' }}
-        platform: ${{ github.event.inputs.platform || 'linux' }}
-        build-command: ${{ 'build:' + (github.event.inputs.platform || 'linux') }}
+  build-linux:
+    name: 🐧 Build Linux
+    runs-on: ubuntu-latest
+    if: github.event.inputs.platform == 'linux' || github.event.inputs.platform == ''
 
     steps:
       - name: 📥 Checkout code
@@ -51,36 +47,140 @@ jobs:
 
       - name: 🔧 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit || bash scripts/install-deps.sh
+          bash scripts/ci-install.sh
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
-          PUPPETEER_DOWNLOAD_HOST: ${{ env.PUPPETEER_DOWNLOAD_HOST }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
           PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
 
       - name: 🏗️ Build application
-        run: npm run ${{ matrix.build-command }}
+        run: npm run build:linux
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📁 Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-build-${{ github.sha }}
+          name: linux-build-${{ github.sha }}
           path: |
             dist/*.AppImage
-            dist/*.exe
-            dist/*.zip
             dist/latest-linux.yml
+          retention-days: 30
+
+      - name: 📊 Build info
+        run: |
+          echo "🏗️ Build completed for Linux"
+          echo "📦 Build artifacts:"
+          ls -la dist/
+          echo "📏 Build size:"
+          du -sh dist/
+
+  build-windows:
+    name: 🪟 Build Windows
+    runs-on: windows-latest
+    if: github.event.inputs.platform == 'win'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Clear npm cache
+        run: npm cache clean --force
+
+      - name: 🔧 Install dependencies
+        run: |
+          bash scripts/ci-install.sh
+        env:
+          ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
+          ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
+          PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
+
+      - name: 🏗️ Build application
+        run: npm run build:win
+        env:
+          ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
+          ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📁 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-${{ github.sha }}
+          path: |
+            dist/*.exe
             dist/latest-win.yml
+          retention-days: 30
+
+      - name: 📊 Build info
+        run: |
+          echo "🏗️ Build completed for Windows"
+          echo "📦 Build artifacts:"
+          ls -la dist/
+          echo "📏 Build size:"
+          du -sh dist/
+
+  build-macos:
+    name: 🍎 Build macOS
+    runs-on: macos-latest
+    if: github.event.inputs.platform == 'mac'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔧 Clear npm cache
+        run: npm cache clean --force
+
+      - name: 🔧 Install dependencies
+        run: |
+          bash scripts/ci-install.sh
+        env:
+          ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
+          ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
+          PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
+
+      - name: 🏗️ Build application
+        run: npm run build:mac
+        env:
+          ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
+          ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📁 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build-${{ github.sha }}
+          path: |
+            dist/*.zip
             dist/latest-mac.yml
           retention-days: 30
 
       - name: 📊 Build info
         run: |
-          echo "🏗️ Build completed for ${{ matrix.platform }}"
+          echo "🏗️ Build completed for macOS"
           echo "📦 Build artifacts:"
           ls -la dist/
           echo "📏 Build size:"
