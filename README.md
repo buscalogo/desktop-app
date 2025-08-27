@@ -255,6 +255,7 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 ### Comunidade
 - [Discord](https://discord.gg/AJjDJUc8bn)
+- [Telegram](https://t.me/buscalogo)
 - [GitHub Issues](https://github.com/buscalogo/desktop-app/issues)
 - [Email](mailto:support@buscalogo.com)
 
