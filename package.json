@@ -1,6 +1,6 @@
 {
   "name": "buscalogo-desktop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "BuscaLogo Desktop App - Intelligent Web Content Collection & Analysis",
   "main": "src/main.js",
   "homepage": "https://buscalogo.com",
@@ -78,7 +78,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.ico"
