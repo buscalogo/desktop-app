@@ -11,7 +11,8 @@ env:
   ELECTRON_CACHE: '~/.cache/electron'
   ELECTRON_BUILDER_CACHE: '~/.cache/electron-builder'
   PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'false'
-  PUPPETEER_DOWNLOAD_HOST: 'https://storage.googleapis.com'
+  PUPPETEER_DOWNLOAD_BASE_URL: 'https://storage.googleapis.com'
+  PUPPETEER_CHROMIUM_REVISION: '121.0.6167.139'
   PUPPETEER_CACHE_DIR: '~/.cache/puppeteer'
 
 jobs:
@@ -34,12 +35,13 @@ jobs:
 
       - name: 🔧 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit || bash scripts/install-deps.sh
+          bash scripts/ci-install.sh
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
-          PUPPETEER_DOWNLOAD_HOST: ${{ env.PUPPETEER_DOWNLOAD_HOST }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
           PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
 
       - name: 🔍 Lint code
@@ -78,12 +80,13 @@ jobs:
 
       - name: 🔧 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit || bash scripts/install-deps.sh
+          bash scripts/ci-install.sh
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
-          PUPPETEER_DOWNLOAD_HOST: ${{ env.PUPPETEER_DOWNLOAD_HOST }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
           PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
 
       - name: 🔒 Audit dependencies
@@ -131,12 +134,13 @@ jobs:
 
       - name: 🔧 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit || bash scripts/install-deps.sh
+          bash scripts/ci-install.sh
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
-          PUPPETEER_DOWNLOAD_HOST: ${{ env.PUPPETEER_DOWNLOAD_HOST }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
           PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
 
       - name: 🏗️ Build application
@@ -169,12 +173,13 @@ jobs:
 
       - name: 🔧 Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit || bash scripts/install-deps.sh
+          bash scripts/ci-install.sh
         env:
           ELECTRON_CACHE: ${{ env.ELECTRON_CACHE }}
           ELECTRON_BUILDER_CACHE: ${{ env.ELECTRON_BUILDER_CACHE }}
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: ${{ env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD }}
-          PUPPETEER_DOWNLOAD_HOST: ${{ env.PUPPETEER_DOWNLOAD_HOST }}
+          PUPPETEER_DOWNLOAD_BASE_URL: ${{ env.PUPPETEER_DOWNLOAD_BASE_URL }}
+          PUPPETEER_CHROMIUM_REVISION: ${{ env.PUPPETEER_CHROMIUM_REVISION }}
           PUPPETEER_CACHE_DIR: ${{ env.PUPPETEER_CACHE_DIR }}
 
       - name: 📊 Check bundle size

@@ -12,6 +12,11 @@ echo "🧹 Limpando caches..."
 npm cache clean --force
 rm -rf node_modules package-lock.json
 
+# Configurar variáveis de ambiente para Puppeteer
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false
+export PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com
+export PUPPETEER_CHROMIUM_REVISION=121.0.6167.139
+
 # Tentar instalação limpa
 echo "📦 Tentando instalação limpa..."
 npm install --no-audit --no-fund

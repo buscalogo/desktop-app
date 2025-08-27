@@ -9,6 +9,10 @@ env:
   NODE_VERSION: '20'
   ELECTRON_CACHE: '~/.cache/electron'
   ELECTRON_BUILDER_CACHE: '~/.cache/electron-builder'
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'false'
+  PUPPETEER_DOWNLOAD_BASE_URL: 'https://storage.googleapis.com'
+  PUPPETEER_CHROMIUM_REVISION: '121.0.6167.139'
+  PUPPETEER_CACHE_DIR: '~/.cache/puppeteer'
 
 jobs:
   release:

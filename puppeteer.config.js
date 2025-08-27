@@ -2,7 +2,7 @@ module.exports = {
   // Configurações do Puppeteer para evitar problemas de instalação
   puppeteer: {
     // Usar versão específica do Chromium
-    chromiumRevision: '1095492',
+    chromiumRevision: process.env.PUPPETEER_CHROMIUM_REVISION || '121.0.6167.139',
     
     // Configurações de download
     downloadPath: process.env.PUPPETEER_DOWNLOAD_PATH || './.cache/puppeteer',
@@ -32,5 +32,11 @@ module.exports = {
       '--no-zygote',
       '--disable-gpu'
     ]
+  },
+  
+  // Configurações específicas para CI/CD
+  ci: {
+    skipDownload: process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD === 'true',
+    downloadBaseUrl: process.env.PUPPETEER_DOWNLOAD_BASE_URL || 'https://storage.googleapis.com'
   }
 };
