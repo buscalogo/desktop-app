@@ -1,15 +1,13 @@
 /**
  * BuscaLogo Desktop - Dashboard View
  */
-
 class DashboardView {
-  constructor() {
-    this.init();
+  constructor () {
+    this.init()
   }
-  
-  init() {
-    console.log('🏠 Dashboard view carregada');
+
+  init () {
+    console.log('🏠 Dashboard view carregada')
   }
 }
-
-window.DashboardView = DashboardView;
+window.DashboardView = DashboardView

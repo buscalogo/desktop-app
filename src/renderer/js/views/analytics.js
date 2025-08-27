@@ -1,6 +1,6 @@
 /**
  * BuscaLogo Desktop - Analytics View
- * 
+ *
  * Funcionalidades:
  * - Gráficos de performance de scraping
  * - Análise de conteúdo e metadados
@@ -9,93 +9,95 @@
  * - Exportação de dados
  */
 
+/* global Chart */
+
+// Verifica se Chart.js está disponível
+if (typeof Chart === 'undefined') {
+  console.warn('⚠️ Chart.js não está disponível. Gráficos não serão renderizados.')
+  // Cria um mock do Chart para evitar erros
+  window.Chart = class MockChart {
+    constructor () {
+      console.warn('⚠️ Usando mock do Chart.js')
+    }
+
+    destroy () {}
+    update () {}
+  }
+}
+
 class AnalyticsView {
-  constructor() {
-    console.log('🚀 AnalyticsView: Construtor chamado');
-    this.currentPeriod = '7d';
-    this.charts = {};
-    this.pagesData = null;
-    this.domainsData = null;
-    this.contentData = null;
-    this.performanceData = null;
-    this.linkAnalysisData = null;
-    this.contentAnalysisData = null;
-    
+  constructor () {
+    console.log('🚀 AnalyticsView: Construtor chamado')
+    this.currentPeriod = '7d'
+    this.charts = {}
+    this.pagesData = null
+    this.domainsData = null
+    this.contentData = null
+    this.performanceData = null
+    this.linkAnalysisData = null
+    this.contentAnalysisData = null
     // Debug do estado do loading
     setTimeout(() => {
-      console.log('🔍 AnalyticsView: Debug do loading no construtor...');
-      this.debugLoadingState();
-      this.showLoading(false);
-    }, 100);
-    
-    console.log('✅ AnalyticsView: Construtor concluído');
+      console.log('🔍 AnalyticsView: Debug do loading no construtor...')
+      this.debugLoadingState()
+      this.showLoading(false)
+    }, 100)
+
+    console.log('✅ AnalyticsView: Construtor concluído')
   }
 
   /**
    * Inicializa a view
    */
-  async init() {
+  async init () {
     try {
-      console.log('🚀 AnalyticsView: Iniciando inicialização...');
-      
+      console.log('🚀 AnalyticsView: Iniciando inicialização...')
       // Debug do estado do loading
-      console.log('🔍 AnalyticsView: Debug do loading no init...');
-      this.debugLoadingState();
-      
+      console.log('🔍 AnalyticsView: Debug do loading no init...')
+      this.debugLoadingState()
       // Configura gráficos
-      console.log('📊 Configurando gráficos...');
-      this.setupCharts();
-      
+      console.log('📊 Configurando gráficos...')
+      this.setupCharts()
       // Configura event listeners
-      console.log('🎯 Configurando event listeners...');
-      this.setupEventListeners();
-      
+      console.log('🎯 Configurando event listeners...')
+      this.setupEventListeners()
       // Carrega dados iniciais
-      console.log('🔄 Carregando dados iniciais...');
-      await this.loadAnalyticsData();
-      
-      console.log('✅ AnalyticsView: Inicialização concluída com sucesso!');
-      
+      console.log('🔄 Carregando dados iniciais...')
+      await this.loadAnalyticsData()
+      console.log('✅ AnalyticsView: Inicialização concluída com sucesso!')
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro na inicialização:', error);
+      console.error('❌ AnalyticsView: Erro na inicialização:', error)
     }
   }
 
   /**
    * Configura gráficos
    */
-  setupCharts() {
+  setupCharts () {
     try {
       // Gráfico de páginas capturadas por dia
-      this.setupPagesChart();
-      
+      this.setupPagesChart()
       // Gráfico de domínios mais ativos
-      this.setupDomainsChart();
-      
+      this.setupDomainsChart()
       // Gráfico de tamanho de conteúdo
-      this.setupContentSizeChart();
-      
+      this.setupContentSizeChart()
       // Gráfico de performance de captura
-      this.setupPerformanceChart();
-      
+      this.setupPerformanceChart()
       // Gráfico de análise de links
-      this.setupLinkAnalysisChart();
-      
+      this.setupLinkAnalysisChart()
       // Gráfico de análise de conteúdo
-      this.setupContentAnalysisChart();
-      
+      this.setupContentAnalysisChart()
     } catch (error) {
-      console.error('❌ Erro ao configurar gráficos:', error);
+      console.error('❌ Erro ao configurar gráficos:', error)
     }
   }
 
   /**
    * Configura gráfico de páginas capturadas
    */
-  setupPagesChart() {
-    const ctx = document.getElementById('pagesChart');
-    if (!ctx) return;
-    
+  setupPagesChart () {
+    const ctx = document.getElementById('pagesChart')
+    if (!ctx) return
     this.charts.pages = new Chart(ctx, {
       type: 'line',
       data: {
@@ -104,7 +106,7 @@ class AnalyticsView {
           label: 'Páginas Capturadas',
           data: [],
           borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          backgroundColor: ' rgba(59, 130, 246, 0.1)',
           tension: 0.4,
           fill: true
         }]
@@ -127,16 +129,15 @@ class AnalyticsView {
           }
         }
       }
-    });
+    })
   }
 
   /**
    * Configura gráfico de domínios
    */
-  setupDomainsChart() {
-    const ctx = document.getElementById('domainsChart');
-    if (!ctx) return;
-    
+  setupDomainsChart () {
+    const ctx = document.getElementById('domainsChart')
+    if (!ctx) return
     this.charts.domains = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -168,16 +169,15 @@ class AnalyticsView {
           }
         }
       }
-    });
+    })
   }
 
   /**
    * Configura gráfico de tamanho de conteúdo
    */
-  setupContentSizeChart() {
-    const ctx = document.getElementById('contentSizeChart');
-    if (!ctx) return;
-    
+  setupContentSizeChart () {
+    const ctx = document.getElementById('contentSizeChart')
+    if (!ctx) return
     this.charts.contentSize = new Chart(ctx, {
       type: 'bar',
       data: {
@@ -213,16 +213,15 @@ class AnalyticsView {
           }
         }
       }
-    });
+    })
   }
 
   /**
    * Configura gráfico de performance
    */
-  setupPerformanceChart() {
-    const ctx = document.getElementById('performanceChart');
-    if (!ctx) return;
-    
+  setupPerformanceChart () {
+    const ctx = document.getElementById('performanceChart')
+    if (!ctx) return
     this.charts.performance = new Chart(ctx, {
       type: 'radar',
       data: {
@@ -231,7 +230,7 @@ class AnalyticsView {
           label: 'Performance Atual',
           data: [0, 0, 0, 0, 0],
           borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.2)',
+          backgroundColor: ' rgba(59, 130, 246, 0.2)',
           pointBackgroundColor: '#3b82f6'
         }]
       },
@@ -251,16 +250,15 @@ class AnalyticsView {
           }
         }
       }
-    });
+    })
   }
 
   /**
    * Configura gráfico de análise de links
    */
-  setupLinkAnalysisChart() {
-    const ctx = document.getElementById('linkAnalysisChart');
-    if (!ctx) return;
-    
+  setupLinkAnalysisChart () {
+    const ctx = document.getElementById('linkAnalysisChart')
+    if (!ctx) return
     this.charts.linkAnalysis = new Chart(ctx, {
       type: 'bar',
       data: {
@@ -305,16 +303,15 @@ class AnalyticsView {
           }
         }
       }
-    });
+    })
   }
 
   /**
    * Configura gráfico de análise de conteúdo
    */
-  setupContentAnalysisChart() {
-    const ctx = document.getElementById('contentAnalysisChart');
-    if (!ctx) return;
-    
+  setupContentAnalysisChart () {
+    const ctx = document.getElementById('contentAnalysisChart')
+    if (!ctx) return
     this.charts.contentAnalysis = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -353,67 +350,60 @@ class AnalyticsView {
           }
         }
       }
-    });
+    })
   }
 
   /**
    * Configura event listeners
    */
-  setupEventListeners() {
+  setupEventListeners () {
     try {
       // Filtros de período
-      const periodFilters = document.querySelectorAll('.period-filter');
+      const periodFilters = document.querySelectorAll('.period-filter')
       periodFilters.forEach(filter => {
         filter.addEventListener('click', (e) => {
-          e.preventDefault();
-          const period = filter.dataset.period;
-          this.changePeriod(period);
-        });
-      });
-
+          e.preventDefault()
+          const period = filter.dataset.period
+          this.changePeriod(period)
+        })
+      })
       // Botão de atualizar
-      const refreshBtn = document.getElementById('refreshAnalyticsBtn');
+      const refreshBtn = document.getElementById('refreshAnalyticsBtn')
       if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => this.refreshAnalytics());
+        refreshBtn.addEventListener('click', () => this.refreshAnalytics())
       }
-
       // Botão de exportar
-      const exportBtn = document.getElementById('exportAnalyticsBtn');
+      const exportBtn = document.getElementById('exportAnalyticsBtn')
       if (exportBtn) {
-        exportBtn.addEventListener('click', () => this.exportAnalytics());
+        exportBtn.addEventListener('click', () => this.exportAnalytics())
       }
-
       // Filtro de domínio
-      const domainFilter = document.getElementById('domainFilter');
+      const domainFilter = document.getElementById('domainFilter')
       if (domainFilter) {
-        domainFilter.addEventListener('change', (e) => this.filterByDomain(e.target.value));
+        domainFilter.addEventListener('change', (e) => this.filterByDomain(e.target.value))
       }
-
     } catch (error) {
-      console.error('❌ Erro ao configurar event listeners:', error);
+      console.error('❌ Erro ao configurar event listeners:', error)
     }
   }
 
   /**
    * Carrega dados de analytics
    */
-  async loadAnalyticsData() {
+  async loadAnalyticsData () {
     try {
-      console.log('🔄 AnalyticsView: Iniciando carregamento de dados...');
-      this.showLoading(true);
-      
+      console.log('🔄 AnalyticsView: Iniciando carregamento de dados...')
+      this.showLoading(true)
       // Timeout de segurança para esconder loading
       const loadingTimeout = setTimeout(() => {
-        console.warn('⚠️ AnalyticsView: Timeout de loading atingido, escondendo...');
-        this.showLoading(false);
-      }, 10000); // 10 segundos
-      
+        console.warn('⚠️ AnalyticsView: Timeout de loading atingido, escondendo...')
+        this.showLoading(false)
+      }, 10000) // 10 segundos
       // Obtém dados do scraper
-      const scraperData = await this.getScraperData();
-      console.log('📊 AnalyticsView: Dados do scraper obtidos:', scraperData);
-      
+      const scraperData = await this.getScraperData()
+      console.log('📊 AnalyticsView: Dados do scraper obtidos:', scraperData)
       // Carrega dados específicos para cada gráfico
-      console.log('📊 AnalyticsView: Carregando dados dos gráficos...');
+      console.log('📊 AnalyticsView: Carregando dados dos gráficos...')
       await Promise.all([
         this.loadPagesData(scraperData),
         this.loadDomainsData(scraperData),
@@ -421,376 +411,320 @@ class AnalyticsView {
         this.loadPerformanceData(scraperData),
         this.loadLinkAnalysisData(scraperData),
         this.loadContentAnalysisData(scraperData)
-      ]);
-      
-      console.log('📊 AnalyticsView: Todos os dados carregados, verificando domínios...');
-      console.log('📊 AnalyticsView: this.domainsData:', this.domainsData);
-      
+      ])
+      console.log('📊 AnalyticsView: Todos os dados carregados, verificando domínios...')
+      console.log('📊 AnalyticsView: this.domainsData:', this.domainsData)
       // Atualiza gráficos e métricas
-      console.log('📊 AnalyticsView: Atualizando gráficos e métricas...');
-      this.updateCharts();
-      this.updateSummaryMetrics(scraperData);
-      
+      console.log('📊 AnalyticsView: Atualizando gráficos e métricas...')
+      this.updateCharts()
+      this.updateSummaryMetrics(scraperData)
       // Verificação adicional: garante que o filtro de domínios seja populado
-      console.log('🔍 AnalyticsView: Verificação adicional - populando filtro de domínios...');
+      console.log('🔍 AnalyticsView: Verificação adicional - populando filtro de domínios...')
       if (this.domainsData && this.domainsData.labels.length > 0) {
-        const validDomains = this.domainsData.labels.filter(label => 
+        const validDomains = this.domainsData.labels.filter(label =>
           label !== 'Sem dados' && label !== 'Erro' && label !== 'Domínios únicos'
-        );
-        console.log('🔍 AnalyticsView: Domínios válidos para filtro:', validDomains);
-        this.populateDomainFilter(validDomains);
+        )
+        console.log('🔍 AnalyticsView: Domínios válidos para filtro:', validDomains)
+        this.populateDomainFilter(validDomains)
       } else {
-        console.log('🔍 AnalyticsView: Nenhum dado de domínios disponível, populando com array vazio');
-        this.populateDomainFilter([]);
+        console.log('🔍 AnalyticsView: Nenhum dado de domínios disponível, populando com array vazio')
+        this.populateDomainFilter([])
       }
-      
       // Limpa timeout e esconde loading
-      clearTimeout(loadingTimeout);
-      this.showLoading(false);
-      
-      console.log('✅ AnalyticsView: Analytics carregado com sucesso!');
-      
+      clearTimeout(loadingTimeout)
+      this.showLoading(false)
+      console.log('✅ AnalyticsView: Analytics carregado com sucesso!')
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao carregar analytics:', error);
-      
+      console.error('❌ AnalyticsView: Erro ao carregar analytics:', error)
       // Garante que o loading seja escondido mesmo em caso de erro
-      this.showLoading(false);
-      
+      this.showLoading(false)
     } finally {
       // Garantia adicional de que o loading seja escondido
-      console.log('🔄 AnalyticsView: Finalizando carregamento...');
-      this.showLoading(false);
+      console.log('🔄 AnalyticsView: Finalizando carregamento...')
+      this.showLoading(false)
     }
   }
 
   /**
    * Obtém dados do scraper
    */
-  async getScraperData() {
+  async getScraperData () {
     try {
-      console.log('🔍 AnalyticsView: Tentando obter dados do scraper...');
-      console.log('🔍 AnalyticsView: window.buscaLogoApp existe?', !!window.buscaLogoApp);
-      console.log('🔍 AnalyticsView: window.buscaLogoApp.scraper existe?', !!(window.buscaLogoApp && window.buscaLogoApp.scraper));
-      
+      console.log('🔍 AnalyticsView: Tentando obter dados do scraper...')
+      console.log('🔍 AnalyticsView: window.buscaLogoApp existe?', !!window.buscaLogoApp)
+      console.log('🔍 AnalyticsView: window.buscaLogoApp.scraper existe?', !!(window.buscaLogoApp && window.buscaLogoApp.scraper))
       // Timeout de segurança para evitar travamentos
       const scraperTimeout = setTimeout(() => {
-        console.warn('⚠️ AnalyticsView: Timeout do scraper atingido, usando dados de fallback');
-      }, 5000); // 5 segundos
-      
+        console.warn('⚠️ AnalyticsView: Timeout do scraper atingido, usando dados de fallback')
+      }, 5000) // 5 segundos
       // Tenta obter dados do scraper global
       if (window.buscaLogoApp && window.buscaLogoApp.scraper) {
-        console.log('🔍 AnalyticsView: Scraper encontrado, obtendo dados...');
-        
+        console.log('🔍 AnalyticsView: Scraper encontrado, obtendo dados...')
         try {
-          const stats = await window.buscaLogoApp.scraper.getStats();
-          console.log('📊 AnalyticsView: Estatísticas obtidas:', stats);
-          
+          const stats = await window.buscaLogoApp.scraper.getStats()
+          console.log('📊 AnalyticsView: Estatísticas obtidas:', stats)
           // Obtém dados das páginas e links
-          let pages = [];
-          let links = [];
-          
+          let pages = []
+          let links = []
           try {
             if (window.buscaLogoApp.scraper.getAllPages) {
-              pages = await window.buscaLogoApp.scraper.getAllPages();
-              console.log('📄 AnalyticsView: Páginas obtidas:', pages.length);
-              
+              pages = await window.buscaLogoApp.scraper.getAllPages()
+              console.log('📄 AnalyticsView: Páginas obtidas:', pages.length)
               // Debug: verifica algumas páginas
               if (pages.length > 0) {
-                console.log('🔍 AnalyticsView: Primeira página:', pages[0]);
-                console.log('🔍 AnalyticsView: Última página:', pages[pages.length - 1]);
-                
+                console.log('🔍 AnalyticsView: Primeira página:', pages[0])
+                console.log('🔍 AnalyticsView: Última página:', pages[pages.length - 1])
                 // Verifica hostnames únicos
-                const hostnames = [...new Set(pages.map(page => page.hostname).filter(Boolean))];
-                console.log('🌐 AnalyticsView: Hostnames únicos encontrados:', hostnames);
+                const hostnames = [...new Set(pages.map(page => page.hostname).filter(Boolean))]
+                console.log('🌐 AnalyticsView: Hostnames únicos encontrados:', hostnames)
               }
             }
           } catch (error) {
-            console.warn('⚠️ AnalyticsView: Erro ao obter páginas:', error);
+            console.warn('⚠️ AnalyticsView: Erro ao obter páginas:', error)
           }
-          
           try {
             if (window.buscaLogoApp.scraper.getAllLinks) {
-              links = await window.buscaLogoApp.scraper.getAllLinks();
-              console.log('🔗 AnalyticsView: Links obtidos:', links.length);
+              links = await window.buscaLogoApp.scraper.getAllLinks()
+              console.log('🔗 AnalyticsView: Links obtidos:', links.length)
             }
           } catch (error) {
-            console.warn('⚠️ AnalyticsView: Erro ao obter links:', error);
+            console.warn('⚠️ AnalyticsView: Erro ao obter links:', error)
           }
-          
-          clearTimeout(scraperTimeout);
-          
+          clearTimeout(scraperTimeout)
           const result = {
             ...stats,
             capturedPages: pages,
             linkIndex: links
-          };
-          
-          console.log('✅ AnalyticsView: Dados do scraper retornados:', result);
-          console.log('🔍 AnalyticsView: capturedPages no resultado:', result.capturedPages);
-          console.log('🔍 AnalyticsView: capturedPages.length no resultado:', result.capturedPages.length);
-          
-          return result;
-          
+          }
+          console.log('✅ AnalyticsView: Dados do scraper retornados:', result)
+          console.log('🔍 AnalyticsView: capturedPages no resultado:', result.capturedPages)
+          console.log('🔍 AnalyticsView: capturedPages.length no resultado:', result.capturedPages.length)
+          return result
         } catch (error) {
-          console.error('❌ AnalyticsView: Erro ao obter dados do scraper:', error);
-          clearTimeout(scraperTimeout);
-          
+          console.error('❌ AnalyticsView: Erro ao obter dados do scraper:', error)
+          clearTimeout(scraperTimeout)
           // Em caso de erro, usa dados básicos do scraper se disponível
           if (window.buscaLogoApp.scraper.getStats) {
             try {
-              const basicStats = await window.buscaLogoApp.scraper.getStats();
-              console.log('📊 AnalyticsView: Usando dados básicos do scraper:', basicStats);
+              const basicStats = await window.buscaLogoApp.scraper.getStats()
+              console.log('📊 AnalyticsView: Usando dados básicos do scraper:', basicStats)
               return {
                 ...basicStats,
                 capturedPages: [],
                 linkIndex: []
-              };
+              }
             } catch (basicError) {
-              console.warn('⚠️ AnalyticsView: Erro ao obter dados básicos:', basicError);
+              console.warn('⚠️ AnalyticsView: Erro ao obter dados básicos:', basicError)
             }
           }
         }
       }
-      
       // Fallback: dados simulados para teste
-      clearTimeout(scraperTimeout);
-      console.log('⚠️ AnalyticsView: Scraper não encontrado, usando dados simulados...');
+      clearTimeout(scraperTimeout)
+      console.log('⚠️ AnalyticsView: Scraper não encontrado, usando dados simulados...')
       const fallbackData = {
         totalPages: 59,
         uniqueHosts: 1,
         totalSize: 0.1,
         capturedPages: [],
         linkIndex: []
-      };
-      console.log('📊 AnalyticsView: Dados de fallback:', fallbackData);
-      return fallbackData;
-      
+      }
+      console.log('📊 AnalyticsView: Dados de fallback:', fallbackData)
+      return fallbackData
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao obter dados do scraper:', error);
+      console.error('❌ AnalyticsView: Erro ao obter dados do scraper:', error)
       const errorData = {
         totalPages: 0,
         uniqueHosts: 0,
         totalSize: 0,
         capturedPages: [],
         linkIndex: []
-      };
-      console.log('📊 AnalyticsView: Dados de erro:', errorData);
-      return errorData;
+      }
+      console.log('📊 AnalyticsView: Dados de erro:', errorData)
+      return errorData
     }
   }
-  
+
   /**
    * Carrega dados de páginas
    */
-  async loadPagesData(scraperData) {
+  async loadPagesData (scraperData) {
     try {
-      const totalPages = scraperData.totalPages || 0;
-      const capturedPages = scraperData.capturedPages || [];
-      
+      const totalPages = scraperData.totalPages || 0
+      const capturedPages = scraperData.capturedPages || []
       if (totalPages === 0) {
         this.pagesData = {
           labels: ['Sem dados'],
           data: [0]
-        };
-        return;
+        }
+        return
       }
-      
       // Cria timeline baseado no período selecionado
-      const days = this.getDaysArray(this.currentPeriod);
-      const pagesByDay = {};
-      
+      const days = this.getDaysArray(this.currentPeriod)
+      const pagesByDay = {}
       // Inicializa contadores por dia
       days.forEach(day => {
-        pagesByDay[day] = 0;
-      });
-      
+        pagesByDay[day] = 0
+      })
       // Distribui páginas pelos dias
       if (capturedPages.length > 0) {
         // Se tem páginas reais, tenta usar timestamps
         capturedPages.forEach((page, index) => {
           if (page.timestamp) {
-            const pageDate = new Date(page.timestamp);
-            const dayKey = pageDate.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' });
-            
-            if (pagesByDay.hasOwnProperty(dayKey)) {
-              pagesByDay[dayKey]++;
+            const pageDate = new Date(page.timestamp)
+            const dayKey = pageDate.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })
+            if (Object.prototype.hasOwnProperty.call(pagesByDay, dayKey)) {
+              pagesByDay[dayKey]++
             }
           } else {
             // Se não tem timestamp, distribui igualmente
-            const dayIndex = index % days.length;
-            const dayKey = days[dayIndex];
-            pagesByDay[dayKey]++;
+            const dayIndex = index % days.length
+            const dayKey = days[dayIndex]
+            pagesByDay[dayKey]++
           }
-        });
+        })
       } else {
         // Se não tem páginas reais, distribui o total igualmente
-        const pagesPerDay = Math.ceil(totalPages / days.length);
+        const pagesPerDay = Math.ceil(totalPages / days.length)
         days.forEach(day => {
-          pagesByDay[day] = pagesPerDay;
-        });
+          pagesByDay[day] = pagesPerDay
+        })
       }
-      
-      const realPagesData = days.map(day => pagesByDay[day] || 0);
-      
+      const realPagesData = days.map(day => pagesByDay[day] || 0)
       this.pagesData = {
         labels: days,
         data: realPagesData
-      };
-      
-      console.log('📊 Dados de páginas carregados:', this.pagesData);
-      
+      }
+      console.log('📊 Dados de páginas carregados:', this.pagesData)
     } catch (error) {
-      console.error('❌ Erro ao carregar dados de páginas:', error);
+      console.error('❌ Erro ao carregar dados de páginas:', error)
       this.pagesData = {
         labels: ['Erro'],
         data: [0]
-      };
+      }
     }
   }
 
   /**
    * Carrega dados de domínios
    */
-  async loadDomainsData(scraperData) {
+  async loadDomainsData (scraperData) {
     try {
-      console.log('🌐 AnalyticsView: loadDomainsData iniciada');
-      console.log('🌐 AnalyticsView: scraperData recebido:', scraperData);
-      
-      const uniqueHosts = scraperData.uniqueHosts || 0;
-      const capturedPages = scraperData.capturedPages || [];
-      
-      console.log('🌐 AnalyticsView: uniqueHosts:', uniqueHosts);
-      console.log('🌐 AnalyticsView: capturedPages.length:', capturedPages.length);
-      
+      console.log('🌐 AnalyticsView: loadDomainsData iniciada')
+      console.log('🌐 AnalyticsView: scraperData recebido:', scraperData)
+      const uniqueHosts = scraperData.uniqueHosts || 0
+      const capturedPages = scraperData.capturedPages || []
+      console.log('🌐 AnalyticsView: uniqueHosts:', uniqueHosts)
+      console.log('🌐 AnalyticsView: capturedPages.length:', capturedPages.length)
       if (uniqueHosts === 0) {
-        console.log('⚠️ AnalyticsView: uniqueHosts é 0, usando dados vazios');
+        console.log('⚠️ AnalyticsView: uniqueHosts é 0, usando dados vazios')
         this.domainsData = {
           labels: ['Sem dados'],
           data: [0]
-        };
-        
+        }
         // Popula filtro com domínios vazios
-        console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio');
-        this.populateDomainFilter([]);
-        return;
+        console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio')
+        this.populateDomainFilter([])
+        return
       }
-      
       if (capturedPages.length > 0) {
-        console.log('✅ AnalyticsView: Temos páginas capturadas, processando domínios...');
-        
+        console.log('✅ AnalyticsView: Temos páginas capturadas, processando domínios...')
         // Agrupa páginas por domínio
-        const domainCounts = {};
+        const domainCounts = {}
         capturedPages.forEach((page, index) => {
           if (page.hostname) {
-            domainCounts[page.hostname] = (domainCounts[page.hostname] || 0) + 1;
+            domainCounts[page.hostname] = (domainCounts[page.hostname] || 0) + 1
             if (index < 3) { // Log apenas os primeiros 3 para não poluir
-              console.log(`🔍 AnalyticsView: Página ${index + 1} - hostname: ${page.hostname}`);
+              console.log(`🔍 AnalyticsView: Página ${index + 1} - hostname: ${page.hostname}`)
             }
           }
-        });
-        
-        console.log('🌐 AnalyticsView: domainCounts calculado:', domainCounts);
-        
+        })
+        console.log('🌐 AnalyticsView: domainCounts calculado:', domainCounts)
         if (Object.keys(domainCounts).length > 0) {
           // Ordena domínios por quantidade
           const sortedDomains = Object.entries(domainCounts)
-            .sort(([,a], [,b]) => b - a)
-            .slice(0, 8);
-          
-          console.log('🌐 AnalyticsView: sortedDomains:', sortedDomains);
-          
+            . sort(([, a], [, b]) => b - a)
+            . slice(0, 8)
+          console.log('🌐 AnalyticsView: sortedDomains:', sortedDomains)
           this.domainsData = {
             labels: sortedDomains.map(([domain]) => domain),
-            data: sortedDomains.map(([,count]) => count)
-          };
-          
-          const domainsForFilter = sortedDomains.map(([domain]) => domain);
-          console.log('🌐 AnalyticsView: Domínios para o filtro:', domainsForFilter);
-          
+            data: sortedDomains.map(([, count]) => count)
+          }
+          const domainsForFilter = sortedDomains.map(([domain]) => domain)
+          console.log('🌐 AnalyticsView: Domínios para o filtro:', domainsForFilter)
           // Popula filtro com domínios reais
-          console.log('🌐 AnalyticsView: Chamando populateDomainFilter com domínios reais');
-          this.populateDomainFilter(domainsForFilter);
-          
+          console.log('🌐 AnalyticsView: Chamando populateDomainFilter com domínios reais')
+          this.populateDomainFilter(domainsForFilter)
         } else {
-          console.log('⚠️ AnalyticsView: Nenhum domínio encontrado nas páginas');
+          console.log('⚠️ AnalyticsView: Nenhum domínio encontrado nas páginas')
           this.domainsData = {
             labels: ['Domínios únicos'],
             data: [uniqueHosts]
-          };
-          
+          }
           // Popula filtro com domínios vazios
-          console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio (sem domínios)');
-          this.populateDomainFilter([]);
+          console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio (sem domínios)')
+          this.populateDomainFilter([])
         }
       } else {
-        console.log('⚠️ AnalyticsView: Não há páginas capturadas, usando fallback');
+        console.log('⚠️ AnalyticsView: Não há páginas capturadas, usando fallback')
         // Fallback se não tem páginas
         this.domainsData = {
           labels: ['Domínios únicos'],
           data: [uniqueHosts]
-        };
-        
+        }
         // Popula filtro com domínios vazios
-        console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio (fallback)');
-        this.populateDomainFilter([]);
+        console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio (fallback)')
+        this.populateDomainFilter([])
       }
-      
-      console.log('🌐 AnalyticsView: Dados de domínios carregados:', this.domainsData);
-      
+      console.log('🌐 AnalyticsView: Dados de domínios carregados:', this.domainsData)
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao carregar dados de domínios:', error);
+      console.error('❌ AnalyticsView: Erro ao carregar dados de domínios:', error)
       this.domainsData = {
         labels: ['Erro'],
         data: [0]
-      };
-      
+      }
       // Popula filtro com domínios vazios em caso de erro
-      console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio (erro)');
-      this.populateDomainFilter([]);
+      console.log('🌐 AnalyticsView: Chamando populateDomainFilter com array vazio (erro)')
+      this.populateDomainFilter([])
     }
   }
 
   /**
    * Carrega dados de conteúdo
    */
-  async loadContentData(scraperData) {
+  async loadContentData (scraperData) {
     try {
-      const totalSize = scraperData.totalSize || 0;
-      const capturedPages = scraperData.capturedPages || [];
-      
+      const totalSize = scraperData.totalSize || 0
+      const capturedPages = scraperData.capturedPages || []
       if (totalSize === 0) {
         this.contentData = {
           labels: ['Sem dados'],
           data: [0]
-        };
-        return;
+        }
+        return
       }
-      
       if (capturedPages.length > 0) {
         // Calcula tamanho real das páginas
         const pageSizes = capturedPages.map(page => {
-          let pageSize = 0;
-          
-          if (page.title) pageSize += page.title.length;
+          let pageSize = 0
+          if (page.title) pageSize += page.title.length
           if (page.headings) {
             page.headings.forEach(heading => {
-              if (heading.text) pageSize += heading.text.length;
-            });
+              if (heading.text) pageSize += heading.text.length
+            })
           }
           if (page.paragraphs) {
             page.paragraphs.forEach(paragraph => {
-              if (paragraph) pageSize += paragraph.length;
-            });
+              if (paragraph) pageSize += paragraph.length
+            })
           }
           if (page.terms) {
             page.terms.forEach(term => {
-              if (term) pageSize += term.length;
-            });
+              if (term) pageSize += term.length
+            })
           }
-          
-          return Math.round(pageSize / 1024); // Converte para KB
-        });
-        
+          return Math.round(pageSize / 1024) // Converte para KB
+        })
         // Agrupa por faixas de tamanho
         const sizeRanges = {
           '0-10 KB': 0,
@@ -799,447 +733,392 @@ class AnalyticsView {
           '51-100 KB': 0,
           '101-250 KB': 0,
           '250+ KB': 0
-        };
-        
+        }
         pageSizes.forEach(size => {
-          if (size <= 10) sizeRanges['0-10 KB']++;
-          else if (size <= 25) sizeRanges['11-25 KB']++;
-          else if (size <= 50) sizeRanges['26-50 KB']++;
-          else if (size <= 100) sizeRanges['51-100 KB']++;
-          else if (size <= 250) sizeRanges['101-250 KB']++;
-          else sizeRanges['250+ KB']++;
-        });
-        
-        const rangesWithData = Object.entries(sizeRanges).filter(([,count]) => count > 0);
-        
+          if (size <= 10) sizeRanges['0-10 KB']++
+          else if (size <= 25) sizeRanges['11-25 KB']++
+          else if (size <= 50) sizeRanges['26-50 KB']++
+          else if (size <= 100) sizeRanges['51-100 KB']++
+          else if (size <= 250) sizeRanges['101-250 KB']++
+          else sizeRanges['250+ KB']++
+        })
+        const rangesWithData = Object.entries(sizeRanges).filter(([, count]) => count > 0)
         if (rangesWithData.length > 0) {
           this.contentData = {
             labels: rangesWithData.map(([range]) => range),
-            data: rangesWithData.map(([,count]) => count)
-          };
+            data: rangesWithData.map(([, count]) => count)
+          }
         } else {
           this.contentData = {
             labels: ['Tamanho total'],
             data: [Math.round(totalSize * 1024)]
-          };
+          }
         }
       } else {
         // Fallback se não tem páginas
         this.contentData = {
           labels: ['Tamanho total'],
           data: [Math.round(totalSize * 1024)]
-        };
+        }
       }
-      
-      console.log('📊 Dados de conteúdo carregados:', this.contentData);
-      
+      console.log('📊 Dados de conteúdo carregados:', this.contentData)
     } catch (error) {
-      console.error('❌ Erro ao carregar dados de conteúdo:', error);
+      console.error('❌ Erro ao carregar dados de conteúdo:', error)
       this.contentData = {
         labels: ['Erro'],
         data: [0]
-      };
+      }
     }
   }
 
   /**
    * Carrega dados de performance
    */
-  async loadPerformanceData(scraperData) {
+  async loadPerformanceData (scraperData) {
     try {
-      const totalPages = scraperData.totalPages || 1;
-      const uniqueHosts = scraperData.uniqueHosts || 1;
-      const capturedPages = scraperData.capturedPages || [];
-      
+      const totalPages = scraperData.totalPages || 1
+      const uniqueHosts = scraperData.uniqueHosts || 1
+      const capturedPages = scraperData.capturedPages || []
       // Calcula métricas baseadas nos dados reais
-      let qualityScore = 0;
-      let coverageScore = 0;
-      
+      let qualityScore = 0
+      let coverageScore = 0
       if (capturedPages.length > 0) {
-        const pagesWithContent = capturedPages.filter(page => 
+        const pagesWithContent = capturedPages.filter(page =>
           page.title && (page.headings?.length > 0 || page.paragraphs?.length > 0)
-        ).length;
-        
-        qualityScore = Math.min(95, Math.max(70, (pagesWithContent / capturedPages.length) * 100));
-        coverageScore = Math.min(90, Math.max(60, (uniqueHosts / Math.max(1, totalPages / 10)) * 100));
+        ).length
+        qualityScore = Math.min(95, Math.max(70, (pagesWithContent / capturedPages.length) * 100))
+        coverageScore = Math.min(90, Math.max(60, (uniqueHosts / Math.max(1, totalPages / 10)) * 100))
       }
-      
       const performance = {
         velocidade: Math.min(90, Math.max(60, totalPages * 2)),
         precisao: Math.min(95, Math.max(70, qualityScore)),
         cobertura: Math.min(85, Math.max(50, coverageScore)),
         qualidade: Math.min(88, Math.max(65, qualityScore)),
         eficiencia: Math.min(92, Math.max(75, (totalPages / Math.max(1, uniqueHosts)) * 10))
-      };
-      
-      this.performanceData = performance;
-      console.log('🎯 Dados de performance carregados:', this.performanceData);
-      
+      }
+      this.performanceData = performance
+      console.log('🎯 Dados de performance carregados:', this.performanceData)
     } catch (error) {
-      console.error('❌ Erro ao carregar dados de performance:', error);
+      console.error('❌ Erro ao carregar dados de performance:', error)
     }
   }
 
   /**
    * Carrega dados de análise de links
    */
-  async loadLinkAnalysisData(scraperData) {
+  async loadLinkAnalysisData (scraperData) {
     try {
-      const linkIndex = scraperData.linkIndex || [];
-      
+      const linkIndex = scraperData.linkIndex || []
       if (linkIndex.length === 0) {
         this.linkAnalysisData = {
           labels: ['Sem dados'],
           data: [0]
-        };
-        return;
+        }
+        return
       }
-      
       // Analisa tipos de links
-      const linkTypeCounts = {};
+      const linkTypeCounts = {}
       linkIndex.forEach(link => {
         if (link.type) {
-          linkTypeCounts[link.type] = (linkTypeCounts[link.type] || 0) + 1;
+          linkTypeCounts[link.type] = (linkTypeCounts[link.type] || 0) + 1
         }
-      });
-      
+      })
       if (Object.keys(linkTypeCounts).length > 0) {
         // Usa tipos reais
         const sortedTypes = Object.entries(linkTypeCounts)
-          .sort(([,a], [,b]) => b - a)
-          .slice(0, 6);
-        
+          . sort(([, a], [, b]) => b - a)
+          . slice(0, 6)
         this.linkAnalysisData = {
           labels: sortedTypes.map(([type]) => type),
-          data: sortedTypes.map(([,count]) => count)
-        };
+          data: sortedTypes.map(([, count]) => count)
+        }
       } else {
         // Fallback se não tem tipos
         this.linkAnalysisData = {
           labels: ['Links descobertos'],
           data: [linkIndex.length]
-        };
+        }
       }
-      
-      console.log('🔗 Dados de análise de links carregados:', this.linkAnalysisData);
-      
+      console.log('🔗 Dados de análise de links carregados:', this.linkAnalysisData)
     } catch (error) {
-      console.error('❌ Erro ao carregar dados de links:', error);
+      console.error('❌ Erro ao carregar dados de links:', error)
       this.linkAnalysisData = {
         labels: ['Erro'],
         data: [0]
-      };
+      }
     }
   }
 
   /**
    * Carrega dados de análise de conteúdo
    */
-  async loadContentAnalysisData(scraperData) {
+  async loadContentAnalysisData (scraperData) {
     try {
-      const capturedPages = scraperData.capturedPages || [];
-      
+      const capturedPages = scraperData.capturedPages || []
       if (capturedPages.length === 0) {
         this.contentAnalysisData = {
           labels: ['Sem dados'],
           data: [0]
-        };
-        return;
+        }
+        return
       }
-      
       // Analisa estrutura das páginas
       const structureCounts = {
         'Com Título': 0,
         'Com Headings': 0,
         'Com Parágrafos': 0,
         'Com Termos': 0,
-        'Completa': 0
-      };
-      
+        Completa: 0
+      }
       capturedPages.forEach(page => {
-        if (page.title && page.title.trim()) structureCounts['Com Título']++;
-        if (page.headings && page.headings.length > 0) structureCounts['Com Headings']++;
-        if (page.paragraphs && page.paragraphs.length > 0) structureCounts['Com Parágrafos']++;
-        if (page.terms && page.terms.length > 0) structureCounts['Com Termos']++;
-        
+        if (page.title && page.title.trim()) structureCounts['Com Título']++
+        if (page.headings && page.headings.length > 0) structureCounts['Com Headings']++
+        if (page.paragraphs && page.paragraphs.length > 0) structureCounts['Com Parágrafos']++
+        if (page.terms && page.terms.length > 0) structureCounts['Com Termos']++
         if (page.title && (page.headings?.length > 0 || page.paragraphs?.length > 0)) {
-          structureCounts['Completa']++;
+          structureCounts.Completa++
         }
-      });
-      
-      const categoriesWithData = Object.entries(structureCounts).filter(([,count]) => count > 0);
-      
+      })
+      const categoriesWithData = Object.entries(structureCounts).filter(([, count]) => count > 0)
       if (categoriesWithData.length > 0) {
         this.contentAnalysisData = {
           labels: categoriesWithData.map(([category]) => category),
-          data: categoriesWithData.map(([,count]) => count)
-        };
+          data: categoriesWithData.map(([, count]) => count)
+        }
       } else {
         this.contentAnalysisData = {
           labels: ['Páginas capturadas'],
           data: [capturedPages.length]
-        };
+        }
       }
-      
-      console.log('📝 Dados de análise de conteúdo carregados:', this.contentAnalysisData);
-      
+      console.log('📝 Dados de análise de conteúdo carregados:', this.contentAnalysisData)
     } catch (error) {
-      console.error('❌ Erro ao carregar dados de análise de conteúdo:', error);
+      console.error('❌ Erro ao carregar dados de análise de conteúdo:', error)
       this.contentAnalysisData = {
         labels: ['Erro'],
         data: [0]
-      };
+      }
     }
   }
-  
+
   /**
    * Atualiza gráficos com novos dados
    */
-  updateCharts() {
+  updateCharts () {
     try {
       // Atualiza gráfico de páginas
       if (this.charts.pages && this.pagesData) {
-        this.charts.pages.data.labels = this.pagesData.labels;
-        this.charts.pages.data.datasets[0].data = this.pagesData.data;
-        this.charts.pages.update();
+        this.charts.pages.data.labels = this.pagesData.labels
+        this.charts.pages.data.datasets[0].data = this.pagesData.data
+        this.charts.pages.update()
       }
-      
       // Atualiza gráfico de domínios
       if (this.charts.domains && this.domainsData) {
-        this.charts.domains.data.labels = this.domainsData.labels;
-        this.charts.domains.data.datasets[0].data = this.domainsData.data;
-        this.charts.domains.update();
+        this.charts.domains.data.labels = this.domainsData.labels
+        this.charts.domains.data.datasets[0].data = this.domainsData.data
+        this.charts.domains.update()
       }
-      
       // Atualiza gráfico de conteúdo
       if (this.charts.contentSize && this.contentData) {
-        this.charts.contentSize.data.labels = this.contentData.labels;
-        this.charts.contentSize.data.datasets[0].data = this.contentData.data;
-        this.charts.contentSize.update();
+        this.charts.contentSize.data.labels = this.contentData.labels
+        this.charts.contentSize.data.datasets[0].data = this.contentData.data
+        this.charts.contentSize.update()
       }
-      
       // Atualiza gráfico de performance
       if (this.charts.performance && this.performanceData) {
-        this.charts.performance.data.datasets[0].data = Object.values(this.performanceData);
-        this.charts.performance.update();
+        this.charts.performance.data.datasets[0].data = Object.values(this.performanceData)
+        this.charts.performance.update()
       }
-      
       // Atualiza gráfico de análise de links
       if (this.charts.linkAnalysis && this.linkAnalysisData) {
-        this.charts.linkAnalysis.data.labels = this.linkAnalysisData.labels;
-        this.charts.linkAnalysis.data.datasets[0].data = this.linkAnalysisData.data;
-        this.charts.linkAnalysis.update();
+        this.charts.linkAnalysis.data.labels = this.linkAnalysisData.labels
+        this.charts.linkAnalysis.data.datasets[0].data = this.linkAnalysisData.data
+        this.charts.linkAnalysis.update()
       }
-      
       // Atualiza gráfico de análise de conteúdo
       if (this.charts.contentAnalysis && this.contentAnalysisData) {
-        this.charts.contentAnalysis.data.labels = this.contentAnalysisData.labels;
-        this.charts.contentAnalysis.data.datasets[0].data = this.contentAnalysisData.data;
-        this.charts.contentAnalysis.update();
+        this.charts.contentAnalysis.data.labels = this.contentAnalysisData.labels
+        this.charts.contentAnalysis.data.datasets[0].data = this.contentAnalysisData.data
+        this.charts.contentAnalysis.update()
       }
-      
       // Atualiza filtro de domínios
-      this.updateDomainFilter();
-      
+      this.updateDomainFilter()
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao atualizar gráficos:', error);
+      console.error('❌ AnalyticsView: Erro ao atualizar gráficos:', error)
     }
   }
 
   /**
    * Atualiza métricas resumidas
    */
-  updateSummaryMetrics(scraperData) {
+  updateSummaryMetrics (scraperData) {
     try {
       // Total de páginas
-      const totalPages = scraperData.totalPages || 0;
-      this.updateElement('totalPagesAnalytics', totalPages);
-      this.updateTrend('totalPagesAnalytics', totalPages);
-      
+      const totalPages = scraperData.totalPages || 0
+      this.updateElement('totalPagesAnalytics', totalPages)
+      this.updateTrend('totalPagesAnalytics', totalPages)
       // Total de domínios únicos
-      const uniqueHosts = scraperData.uniqueHosts || 0;
-      this.updateElement('uniqueDomainsAnalytics', uniqueHosts);
-      this.updateTrend('uniqueDomainsAnalytics', uniqueHosts);
-      
+      const uniqueHosts = scraperData.uniqueHosts || 0
+      this.updateElement('uniqueDomainsAnalytics', uniqueHosts)
+      this.updateTrend('uniqueDomainsAnalytics', uniqueHosts)
       // Total de capturas
-      const totalCaptures = scraperData.totalPages || 0;
-      this.updateElement('totalSizeAnalytics', totalCaptures);
-      this.updateTrend('totalSizeAnalytics', totalCaptures);
-      
+      const totalCaptures = scraperData.totalPages || 0
+      this.updateElement('totalSizeAnalytics', totalCaptures)
+      this.updateTrend('totalSizeAnalytics', totalCaptures)
       // Performance média
-      const capturedPages = scraperData.capturedPages || [];
-      const pagesWithContent = capturedPages.filter(page => 
+      const capturedPages = scraperData.capturedPages || []
+      const pagesWithContent = capturedPages.filter(page =>
         page.title && (page.headings?.length > 0 || page.paragraphs?.length > 0)
-      ).length;
-      
-      const avgPerformance = totalPages > 0 ? Math.round((pagesWithContent / totalPages) * 100) : 0;
-      this.updateElement('avgPerformanceAnalytics', `${avgPerformance}%`);
-      this.updateTrend('avgPerformanceAnalytics', avgPerformance);
-      
+      ).length
+      const avgPerformance = totalPages > 0 ? Math.round((pagesWithContent / totalPages) * 100) : 0
+      this.updateElement('avgPerformanceAnalytics', `${avgPerformance}%`)
+      this.updateTrend('avgPerformanceAnalytics', avgPerformance)
       console.log('📊 Métricas resumidas atualizadas:', {
         totalPages,
         uniqueHosts,
         totalCaptures,
         pagesWithContent,
         avgPerformance
-      });
-      
+      })
     } catch (error) {
-      console.error('❌ Erro ao atualizar métricas resumidas:', error);
+      console.error('❌ Erro ao atualizar métricas resumidas:', error)
     }
   }
 
   /**
    * Atualiza elemento HTML com valor
    */
-  updateElement(elementId, value) {
+  updateElement (elementId, value) {
     try {
-      const element = document.getElementById(elementId);
+      const element = document.getElementById(elementId)
       if (element) {
-        element.textContent = value;
+        element.textContent = value
       }
     } catch (error) {
-      console.error(`❌ Erro ao atualizar elemento ${elementId}:`, error);
+      console.error(`❌ Erro ao atualizar elemento ${elementId}:`, error)
     }
   }
 
   /**
    * Atualiza tendências das métricas
    */
-  updateTrend(elementId, value) {
+  updateTrend (elementId, value) {
     try {
-      const element = document.getElementById(elementId);
-      if (!element) return;
-      
-      const trendElement = element.parentElement.querySelector('.summary-trend');
-      if (!trendElement) return;
-      
+      const element = document.getElementById(elementId)
+      if (!element) return
+      const trendElement = element.parentElement.querySelector('.summary-trend')
+      if (!trendElement) return
       // Calcula tendência baseada no valor real
-      let trend = 'neutral';
-      let trendText = 'Estável';
-      
+      let trend = 'neutral'
+      let trendText = 'Estável'
       if (value === 0) {
-        trend = 'neutral';
-        trendText = 'Sem dados';
+        trend = 'neutral'
+        trendText = 'Sem dados'
       } else if (value > 0 && value <= 5) {
-        trend = 'positive';
-        trendText = 'Iniciando';
+        trend = 'positive'
+        trendText = 'Iniciando'
       } else if (value > 5 && value <= 20) {
-        trend = 'positive';
-        trendText = 'Crescendo';
+        trend = 'positive'
+        trendText = 'Crescendo'
       } else if (value > 20 && value <= 50) {
-        trend = 'positive';
-        trendText = 'Bom volume';
+        trend = 'positive'
+        trendText = 'Bom volume'
       } else if (value > 50 && value <= 100) {
-        trend = 'positive';
-        trendText = 'Excelente volume';
+        trend = 'positive'
+        trendText = 'Excelente volume'
       } else if (value > 100) {
-        trend = 'positive';
-        trendText = 'Volume massivo';
+        trend = 'positive'
+        trendText = 'Volume massivo'
       }
-      
       // Atualiza classe e texto
-      trendElement.className = `summary-trend ${trend}`;
-      trendElement.textContent = trendText;
-      
+      trendElement.className = `summary-trend ${trend}`
+      trendElement.textContent = trendText
     } catch (error) {
-      console.error('❌ Erro ao atualizar tendência:', error);
+      console.error('❌ Erro ao atualizar tendência:', error)
     }
   }
 
   /**
    * Muda período de análise
    */
-  changePeriod(period) {
+  changePeriod (period) {
     try {
-      console.log(`📅 AnalyticsView: Mudando período para ${period}...`);
-      this.currentPeriod = period;
-      
+      console.log(`📅 AnalyticsView: Mudando período para ${period}...`)
+      this.currentPeriod = period
       // Atualiza botões ativos
       document.querySelectorAll('.period-filter').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector(`.period-filter[data-period="${period}"]`).classList.add('active');
-      
+        btn.classList.remove('active')
+      })
+      document.querySelector(`.period-filter[data-period="${period}"]`).classList.add('active')
       // Reseta filtro de domínios
-      const domainFilter = document.getElementById('domainFilter');
+      const domainFilter = document.getElementById('domainFilter')
       if (domainFilter) {
-        domainFilter.value = '';
-        console.log('🔄 AnalyticsView: Filtro de domínios resetado');
+        domainFilter.value = ''
+        console.log('🔄 AnalyticsView: Filtro de domínios resetado')
       }
-      
       // Recarrega dados para o novo período
-      this.loadAnalyticsData();
-      
-      console.log(`✅ AnalyticsView: Período alterado para ${period}`);
-      
+      this.loadAnalyticsData()
+      console.log(`✅ AnalyticsView: Período alterado para ${period}`)
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao mudar período:', error);
+      console.error('❌ AnalyticsView: Erro ao mudar período:', error)
     }
   }
 
   /**
    * Filtra por domínio
    */
-  filterByDomain(selectedDomain) {
+  filterByDomain (selectedDomain) {
     try {
-      const domainFilter = document.getElementById('domainFilter');
-      if (!domainFilter) return;
-      
-      const selectedDomainValue = selectedDomain || domainFilter.value;
-      console.log('🔍 AnalyticsView: Filtrando por domínio:', selectedDomainValue);
-      
+      const domainFilter = document.getElementById('domainFilter')
+      if (!domainFilter) return
+      const selectedDomainValue = selectedDomain || domainFilter.value
+      console.log('🔍 AnalyticsView: Filtrando por domínio:', selectedDomainValue)
       if (!selectedDomainValue || selectedDomainValue === '') {
         // Mostra todos os dados
-        console.log('🌐 AnalyticsView: Mostrando todos os domínios');
-        this.updateCharts();
-        return;
+        console.log('🌐 AnalyticsView: Mostrando todos os domínios')
+        this.updateCharts()
+        return
       }
-      
       if (selectedDomainValue === 'sem-dados') {
-        console.log('⚠️ AnalyticsView: Nenhum domínio disponível para filtro');
-        return;
+        console.log('⚠️ AnalyticsView: Nenhum domínio disponível para filtro')
+        return
       }
-      
       // Filtra dados por domínio selecionado
       if (this.pagesData && this.domainsData) {
-        console.log('🔍 AnalyticsView: Aplicando filtro de domínio...');
-        
+        console.log('🔍 AnalyticsView: Aplicando filtro de domínio...')
         // Filtra páginas por domínio
-        const filteredPagesData = { ...this.pagesData };
+        // const filteredPagesData = { ...this.pagesData } // Comentado para evitar warning de variável não utilizada
         if (this.pagesData.labels.length > 0 && this.pagesData.labels[0] !== 'Sem dados') {
           // Se tem dados reais, aplica filtro
           // Por enquanto, apenas recarrega os dados
-          console.log('🔍 AnalyticsView: Recarregando dados com filtro aplicado...');
-          this.loadAnalyticsData();
+          console.log('🔍 AnalyticsView: Recarregando dados com filtro aplicado...')
+          this.loadAnalyticsData()
         }
       }
-      
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao filtrar por domínio:', error);
+      console.error('❌ AnalyticsView: Erro ao filtrar por domínio:', error)
     }
   }
 
   /**
    * Atualiza analytics
    */
-  async refreshAnalytics() {
+  async refreshAnalytics () {
     try {
-      console.log('🔄 Atualizando analytics...');
-      await this.loadAnalyticsData();
-      console.log('✅ Analytics atualizado!');
+      console.log('🔄 Atualizando analytics...')
+      await this.loadAnalyticsData()
+      console.log('✅ Analytics atualizado!')
     } catch (error) {
-      console.error('❌ Erro ao atualizar analytics:', error);
+      console.error('❌ Erro ao atualizar analytics:', error)
     }
   }
 
   /**
    * Exporta analytics
    */
-  exportAnalytics() {
+  exportAnalytics () {
     try {
-      console.log('📤 Exportando analytics...');
-      
+      console.log('📤 Exportando analytics...')
       // Cria dados para exportação
       const exportData = {
         periodo: this.currentPeriod,
@@ -1248,8 +1127,9 @@ class AnalyticsView {
           totalPages: this.pagesData?.data.reduce((sum, val) => sum + val, 0) || 0,
           uniqueDomains: this.domainsData?.labels.length || 0,
           totalSize: this.contentData?.data.reduce((sum, val) => sum + val, 0) || 0,
-          avgPerformance: this.performanceData ? 
-            Object.values(this.performanceData).reduce((sum, val) => sum + val, 0) / 5 : 0
+          avgPerformance: this.performanceData
+            ? Object.values(this.performanceData).reduce((sum, val) => sum + val, 0) / 5
+            : 0
         },
         dados: {
           pages: this.pagesData,
@@ -1259,233 +1139,202 @@ class AnalyticsView {
           links: this.linkAnalysisData,
           contentAnalysis: this.contentAnalysisData
         }
-      };
-      
+      }
       // Cria arquivo para download
-      const dataStr = JSON.stringify(exportData, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(dataBlob);
-      link.download = `analytics-${this.currentPeriod}-${new Date().toISOString().split('T')[0]}.json`;
-      link.click();
-      
-      console.log('✅ Analytics exportado com sucesso!');
-      
+      const dataStr = JSON.stringify(exportData, null, 2)
+      const dataBlob = new Blob([dataStr], { type: 'application/json' })
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(dataBlob)
+      link.download = `analytics-${this.currentPeriod}-${new Date().toISOString().split('T')[0]}.json`
+      link.click()
+      console.log('✅ Analytics exportado com sucesso!')
     } catch (error) {
-      console.error('❌ Erro ao exportar analytics:', error);
+      console.error('❌ Erro ao exportar analytics:', error)
     }
   }
 
   /**
    * Mostra/esconde loading
    */
-  showLoading(show) {
+  showLoading (show) {
     try {
-      console.log(`🔄 AnalyticsView: ${show ? 'Mostrando' : 'Escondendo'} loading...`);
-      
-      const loadingElement = document.getElementById('analyticsLoading');
+      console.log(`🔄 AnalyticsView: ${show ? 'Mostrando' : 'Escondendo'} loading...`)
+      const loadingElement = document.getElementById('analyticsLoading')
       if (loadingElement) {
-        console.log('🔍 AnalyticsView: Elemento de loading encontrado');
-        console.log('🔍 AnalyticsView: Estado atual - display:', loadingElement.style.display);
-        console.log('🔍 AnalyticsView: Estado atual - classList:', loadingElement.classList.toString());
-        
+        console.log('🔍 AnalyticsView: Elemento de loading encontrado')
+        console.log('🔍 AnalyticsView: Estado atual - display:', loadingElement.style.display)
+        console.log('🔍 AnalyticsView: Estado atual - classList:', loadingElement.classList.toString())
         if (show) {
-          loadingElement.style.display = 'flex';
-          loadingElement.classList.remove('hidden');
+          loadingElement.style.display = 'flex'
+          loadingElement.classList.remove('hidden')
         } else {
-          loadingElement.style.display = 'none';
-          loadingElement.classList.add('hidden');
+          loadingElement.style.display = 'none'
+          loadingElement.classList.add('hidden')
         }
-        
-        console.log('🔍 AnalyticsView: Estado após mudança - display:', loadingElement.style.display);
-        console.log('🔍 AnalyticsView: Estado após mudança - classList:', loadingElement.classList.toString());
-        console.log(`✅ AnalyticsView: Loading ${show ? 'mostrado' : 'escondido'} com sucesso`);
+        console.log('🔍 AnalyticsView: Estado após mudança - display:', loadingElement.style.display)
+        console.log('🔍 AnalyticsView: Estado após mudança - classList:', loadingElement.classList.toString())
+        console.log(`✅ AnalyticsView: Loading ${show ? 'mostrado' : 'escondido'} com sucesso`)
       } else {
-        console.warn('⚠️ AnalyticsView: Elemento de loading não encontrado');
+        console.warn('⚠️ AnalyticsView: Elemento de loading não encontrado')
       }
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao mostrar/esconder loading:', error);
+      console.error('❌ AnalyticsView: Erro ao mostrar/esconder loading:', error)
     }
   }
 
   /**
    * Debug: verifica estado do loading
    */
-  debugLoadingState() {
+  debugLoadingState () {
     try {
-      const loadingElement = document.getElementById('analyticsLoading');
+      const loadingElement = document.getElementById('analyticsLoading')
       if (loadingElement) {
-        console.log('🔍 AnalyticsView: Debug do loading:');
-        console.log('  - Elemento existe:', !!loadingElement);
-        console.log('  - Display:', loadingElement.style.display);
-        console.log('  - Classes:', loadingElement.classList.toString());
-        console.log('  - Visível:', loadingElement.offsetParent !== null);
+        console.log('🔍 AnalyticsView: Debug do loading:')
+        console.log('  - Elemento existe:', !!loadingElement)
+        console.log('  - Display:', loadingElement.style.display)
+        console.log('  - Classes:', loadingElement.classList.toString())
+        console.log('  - Visível:', loadingElement.offsetParent !== null)
         console.log('  - Dimensões:', {
           width: loadingElement.offsetWidth,
           height: loadingElement.offsetHeight
-        });
+        })
       } else {
-        console.log('🔍 AnalyticsView: Elemento de loading não encontrado');
+        console.log('🔍 AnalyticsView: Elemento de loading não encontrado')
       }
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro no debug do loading:', error);
+      console.error('❌ AnalyticsView: Erro no debug do loading:', error)
     }
   }
 
   /**
    * Popula o select de domínios com dados reais
    */
-  populateDomainFilter(domains = []) {
+  populateDomainFilter (domains = []) {
     try {
-      console.log('🌐 AnalyticsView: Populando filtro de domínios...');
-      console.log('🌐 AnalyticsView: Domínios recebidos:', domains);
-      
-      const domainFilter = document.getElementById('domainFilter');
+      console.log('🌐 AnalyticsView: Populando filtro de domínios...')
+      console.log('🌐 AnalyticsView: Domínios recebidos:', domains)
+      const domainFilter = document.getElementById('domainFilter')
       if (!domainFilter) {
-        console.warn('⚠️ AnalyticsView: Select de domínios não encontrado');
-        return;
+        console.warn('⚠️ AnalyticsView: Select de domínios não encontrado')
+        return
       }
-      
-      console.log('🔍 AnalyticsView: Select de domínios encontrado, removendo opções antigas...');
-      
+      console.log('🔍 AnalyticsView: Select de domínios encontrado, removendo opções antigas...')
       // Remove opções antigas (exceto "Todos os Domínios")
-      const options = domainFilter.querySelectorAll('option');
-      console.log('🔍 AnalyticsView: Opções encontradas:', options.length);
-      
+      const options = domainFilter.querySelectorAll('option')
+      console.log('🔍 AnalyticsView: Opções encontradas:', options.length)
       options.forEach((option, index) => {
         if (index > 0) { // Mantém a primeira opção (Todos os Domínios)
-          console.log('🗑️ AnalyticsView: Removendo opção:', option.textContent);
-          option.remove();
+          console.log('🗑️ AnalyticsView: Removendo opção:', option.textContent)
+          option.remove()
         }
-      });
-      
+      })
       // Adiciona opções com domínios reais
       if (domains.length > 0) {
-        console.log('✅ AnalyticsView: Adicionando', domains.length, 'domínios ao filtro...');
-        
+        console.log('✅ AnalyticsView: Adicionando', domains.length, 'domínios ao filtro...')
         domains.forEach((domain, index) => {
-          const option = document.createElement('option');
-          option.value = domain;
-          option.textContent = `📄 ${domain}`;
-          domainFilter.appendChild(option);
-          
-          console.log(`✅ AnalyticsView: Domínio ${index + 1} adicionado: ${domain}`);
-        });
-        
-        console.log(`✅ AnalyticsView: ${domains.length} domínios adicionados ao filtro com sucesso`);
-        
+          const option = document.createElement('option')
+          option.value = domain
+          option.textContent = `📄 ${domain}`
+          domainFilter.appendChild(option)
+          console.log(`✅ AnalyticsView: Domínio ${index + 1} adicionado: ${domain}`)
+        })
+        console.log(`✅ AnalyticsView: ${domains.length} domínios adicionados ao filtro com sucesso`)
         // Debug: verifica opções finais
-        const finalOptions = domainFilter.querySelectorAll('option');
-        console.log('🔍 AnalyticsView: Opções finais no select:', finalOptions.length);
+        const finalOptions = domainFilter.querySelectorAll('option')
+        console.log('🔍 AnalyticsView: Opções finais no select:', finalOptions.length)
         finalOptions.forEach((option, index) => {
-          console.log(`  ${index + 1}. ${option.textContent} (${option.value})`);
-        });
-        
+          console.log(`  ${index + 1}. ${option.textContent} (${option.value})`)
+        })
       } else {
         // Se não há domínios, adiciona uma opção padrão
-        console.log('⚠️ AnalyticsView: Nenhum domínio disponível, adicionando opção padrão...');
-        
-        const option = document.createElement('option');
-        option.value = "sem-dados";
-        option.textContent = "📄 Sem domínios disponíveis";
-        option.disabled = true;
-        domainFilter.appendChild(option);
-        
-        console.log('⚠️ AnalyticsView: Opção padrão adicionada ao filtro');
+        console.log('⚠️ AnalyticsView: Nenhum domínio disponível, adicionando opção padrão...')
+        const option = document.createElement('option')
+        option.value = 'sem-dados'
+        option.textContent = '📄 Sem domínios disponíveis'
+        option.disabled = true
+        domainFilter.appendChild(option)
+        console.log('⚠️ AnalyticsView: Opção padrão adicionada ao filtro')
       }
-      
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao popular filtro de domínios:', error);
+      console.error('❌ AnalyticsView: Erro ao popular filtro de domínios:', error)
     }
   }
 
   /**
    * Atualiza o filtro de domínios quando os dados mudam
    */
-  updateDomainFilter() {
+  updateDomainFilter () {
     try {
-      console.log('🔄 AnalyticsView: Atualizando filtro de domínios...');
-      
+      console.log('🔄 AnalyticsView: Atualizando filtro de domínios...')
       if (this.domainsData && this.domainsData.labels.length > 0) {
-        const domains = this.domainsData.labels.filter(label => label !== 'Sem dados' && label !== 'Erro');
-        
+        const domains = this.domainsData.labels.filter(label => label !== 'Sem dados' && label !== 'Erro')
         if (domains.length > 0) {
-          this.populateDomainFilter(domains);
-          console.log('✅ AnalyticsView: Filtro de domínios atualizado com', domains.length, 'domínios');
+          this.populateDomainFilter(domains)
+          console.log('✅ AnalyticsView: Filtro de domínios atualizado com', domains.length, 'domínios')
         } else {
-          this.populateDomainFilter([]);
-          console.log('⚠️ AnalyticsView: Nenhum domínio válido para o filtro');
+          this.populateDomainFilter([])
+          console.log('⚠️ AnalyticsView: Nenhum domínio válido para o filtro')
         }
       } else {
-        this.populateDomainFilter([]);
-        console.log('⚠️ AnalyticsView: Dados de domínios não disponíveis para o filtro');
+        this.populateDomainFilter([])
+        console.log('⚠️ AnalyticsView: Dados de domínios não disponíveis para o filtro')
       }
-      
     } catch (error) {
-      console.error('❌ AnalyticsView: Erro ao atualizar filtro de domínios:', error);
+      console.error('❌ AnalyticsView: Erro ao atualizar filtro de domínios:', error)
     }
   }
 
   /**
    * Gera array de dias para o período selecionado
    */
-  getDaysArray(period) {
+  getDaysArray (period) {
     try {
-      const days = [];
-      const today = new Date();
-      
-      let daysCount;
+      const days = []
+      const today = new Date()
+      let daysCount
       switch (period) {
         case '7d':
-          daysCount = 7;
-          break;
+          daysCount = 7
+          break
         case '30d':
-          daysCount = 30;
-          break;
+          daysCount = 30
+          break
         case '90d':
-          daysCount = 90;
-          break;
+          daysCount = 90
+          break
         default:
-          daysCount = 7;
+          daysCount = 7
       }
-      
       for (let i = daysCount - 1; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        days.push(date.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }));
+        const date = new Date(today)
+        date.setDate(date.getDate() - i)
+        days.push(date.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }))
       }
-      
-      return days;
-      
+      return days
     } catch (error) {
-      console.error('❌ Erro ao gerar array de dias:', error);
-      return ['Erro'];
+      console.error('❌ Erro ao gerar array de dias:', error)
+      return ['Erro']
     }
   }
 
   /**
    * Destrói a view
    */
-  destroy() {
+  destroy () {
     try {
       // Destrói gráficos
       Object.values(this.charts).forEach(chart => {
         if (chart && chart.destroy) {
-          chart.destroy();
+          chart.destroy()
         }
-      });
-      
-      this.charts = {};
-      console.log('🗑️ Analytics destruído');
-      
+      })
+      this.charts = {}
+      console.log('🗑️ Analytics destruído')
     } catch (error) {
-      console.error('❌ Erro ao destruir Analytics:', error);
+      console.error('❌ Erro ao destruir Analytics:', error)
     }
   }
 }
-
 // Exporta para uso global
-window.AnalyticsView = AnalyticsView;
-
-console.log('📊 AnalyticsView carregada');
+window.AnalyticsView = AnalyticsView
+console.log('📊 AnalyticsView carregada')

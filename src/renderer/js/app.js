@@ -1,104 +1,101 @@
 /**
  * BuscaLogo Desktop App - Main Application
- * 
+ *
  * Gerencia a aplicação principal, navegação entre views e comunicação
  * com o processo principal do Electron.
  */
 
 class BuscaLogoDesktop {
-  constructor() {
-    this.currentView = 'dashboard';
-    this.systemInfo = null;
-    this.settings = {};
-    
-    this.init();
+  constructor () {
+    this.currentView = 'dashboard'
+    this.systemInfo = null
+    this.settings = {}
+
+    this.init()
   }
-  
+
   /**
    * Inicializa a aplicação
    */
-  async init() {
+  async init () {
     try {
-      console.log('🚀 BuscaLogo Desktop iniciando...');
-      
+      console.log('🚀 BuscaLogo Desktop iniciando...')
+
       // Carrega informações do sistema
-      await this.loadSystemInfo();
-      
+      await this.loadSystemInfo()
+
       // Carrega configurações
-      await this.loadSettings();
-      
+      await this.loadSettings()
+
       // Configura event listeners
-      this.setupEventListeners();
-      
+      this.setupEventListeners()
+
       // Configura navegação
-      this.setupNavigation();
-      
+      this.setupNavigation()
+
       // Inicializa componentes
-      await this.initComponents();
-      
+      await this.initComponents()
+
       // Carrega dados iniciais
-      await this.loadInitialData();
-      
+      await this.loadInitialData()
+
       // Configura tema
-      this.setupTheme();
-      
+      this.setupTheme()
+
       // Configura sincronização com extensão
-      this.setupExtensionSync();
-      
+      this.setupExtensionSync()
+
       // Configura atualização automática de estatísticas
-      this.setupStatsAutoRefresh();
-      
-      console.log('✅ BuscaLogo Desktop iniciado com sucesso');
-      
+      this.setupStatsAutoRefresh()
+
+      console.log('✅ BuscaLogo Desktop iniciado com sucesso')
     } catch (error) {
-      console.error('❌ Erro ao inicializar aplicação:', error);
-      this.showError('Erro de Inicialização', error.message);
+      console.error('❌ Erro ao inicializar aplicação:', error)
+      this.showError('Erro de Inicialização', error.message)
     }
   }
-  
+
   /**
    * Carrega informações do sistema
    */
-  async loadSystemInfo() {
+  async loadSystemInfo () {
     try {
-      this.systemInfo = await window.electronAPI.getSystemInfo();
-      console.log('📊 Informações do sistema carregadas:', this.systemInfo);
-      
+      this.systemInfo = await window.electronAPI.getSystemInfo()
+      console.log('📊 Informações do sistema carregadas:', this.systemInfo)
+
       // Atualiza versão no header
-      const versionElement = document.querySelector('.logo-version');
+      const versionElement = document.querySelector('.logo-version')
       if (versionElement) {
-        versionElement.textContent = `Desktop v${this.systemInfo.appVersion}`;
+        versionElement.textContent = `Desktop v${this.systemInfo.appVersion}`
       }
-      
     } catch (error) {
-      console.error('❌ Erro ao carregar informações do sistema:', error);
+      console.error('❌ Erro ao carregar informações do sistema:', error)
     }
   }
-  
+
   /**
    * Carrega configurações
    */
-  async loadSettings() {
+  async loadSettings () {
     try {
-      const result = window.storageAPI.loadData('buscalogo-settings');
+      const result = window.storageAPI.loadData('buscalogo-settings')
       if (result.success && result.data) {
-        this.settings = { ...this.getDefaultSettings(), ...result.data };
+        this.settings = { ...this.getDefaultSettings(), ...result.data }
       } else {
-        this.settings = this.getDefaultSettings();
+        this.settings = this.getDefaultSettings()
       }
-      
-      console.log('⚙️ Configurações carregadas:', this.settings);
-      
+
+      console.log('⚙️ Configurações carregadas:', this.settings)
     } catch (error) {
-      console.error('❌ Erro ao carregar configurações:', error);
-      this.settings = this.getDefaultSettings();
+      console.error('❌ Erro ao carregar configurações:', error)
+      this.settings = this.getDefaultSettings()
     }
   }
-  
+
   /**
    * Retorna configurações padrão
    */
-  getDefaultSettings() {
+  getDefaultSettings () {
     return {
       theme: 'auto',
       startupView: 'dashboard',
@@ -107,486 +104,475 @@ class BuscaLogoDesktop {
       maxStorageSize: 1000,
       autoCleanup: true,
       cleanupInterval: 30
-    };
+    }
   }
-  
+
   /**
    * Configura event listeners
    */
-  setupEventListeners() {
+  setupEventListeners () {
     // Busca principal
-    const mainSearch = document.getElementById('mainSearch');
-    const searchButton = document.getElementById('searchButton');
-    
+    const mainSearch = document.getElementById('mainSearch')
+    const searchButton = document.getElementById('searchButton')
+
     if (mainSearch) {
       mainSearch.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          this.performSearch();
+          this.performSearch()
         }
-      });
+      })
     }
-    
+
     if (searchButton) {
       searchButton.addEventListener('click', () => {
-        this.performSearch();
-      });
+        this.performSearch()
+      })
     }
-    
+
     // Botões do header
-    const themeToggle = document.getElementById('themeToggle');
-    const settingsButton = document.getElementById('settingsButton');
-    const syncButton = document.getElementById('syncButton');
-    
+    const themeToggle = document.getElementById('themeToggle')
+    const settingsButton = document.getElementById('settingsButton')
+    const syncButton = document.getElementById('syncButton')
+
     if (themeToggle) {
       themeToggle.addEventListener('click', () => {
-        this.toggleTheme();
-      });
+        this.toggleTheme()
+      })
     }
-    
+
     if (settingsButton) {
       settingsButton.addEventListener('click', () => {
-        this.showView('settings');
-      });
+        this.showView('settings')
+      })
     }
-    
+
     if (syncButton) {
       syncButton.addEventListener('click', () => {
-        this.syncWithExtension();
-      });
+        this.syncWithExtension()
+      })
     }
-    
 
-    
     // Eventos do menu
     window.electronAPI.onMenuAction((action) => {
-      this.handleMenuAction(action);
-    });
-    
+      this.handleMenuAction(action)
+    })
+
     // Eventos de erro
     window.electronAPI.onError((error) => {
-      this.handleError(error);
-    });
-    
-    console.log('🔌 Event listeners configurados');
+      this.handleError(error)
+    })
+
+    console.log('🔌 Event listeners configurados')
   }
-  
+
   /**
    * Configura navegação
    */
-  setupNavigation() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    
+  setupNavigation () {
+    const navLinks = document.querySelectorAll('.nav-link')
+
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const view = link.getAttribute('data-view');
+        e.preventDefault()
+
+        const view = link.getAttribute('data-view')
         if (view) {
-          this.showView(view);
+          this.showView(view)
         }
-      });
-    });
-    
-    console.log('🧭 Navegação configurada');
+      })
+    })
+
+    console.log('🧭 Navegação configurada')
   }
-  
+
   /**
    * Inicializa componentes
    */
-  async initComponents() {
+  async initComponents () {
     try {
       // Inicializa sistema de scraping primeiro
-      await this.initScraping();
-      
+      await this.initScraping()
+
       // Inicializa outros componentes
-      this.initDashboard();
-      this.initSearch();
-      this.initAnalytics();
-      this.initSettings();
-      
-      console.log('🧩 Componentes inicializados');
-      
+      this.initDashboard()
+      this.initSearch()
+      this.initAnalytics()
+      this.initSettings()
+
+      console.log('🧩 Componentes inicializados')
     } catch (error) {
-      console.error('❌ Erro ao inicializar componentes:', error);
+      console.error('❌ Erro ao inicializar componentes:', error)
     }
   }
-  
+
   /**
    * Carrega dados iniciais
    */
-  async loadInitialData() {
+  async loadInitialData () {
     try {
       // Carrega estatísticas gerais primeiro
-      await this.loadStats();
-      
+      await this.loadStats()
+
       // Carrega atividade recente
-      await this.loadRecentActivity();
-      
+      await this.loadRecentActivity()
+
       // Carrega estatísticas de scraping (status da API)
-      await this.loadScrapingStats();
-      
-      console.log('📊 Dados iniciais carregados');
-      
+      await this.loadScrapingStats()
+
+      console.log('📊 Dados iniciais carregados')
     } catch (error) {
-      console.error('❌ Erro ao carregar dados iniciais:', error);
+      console.error('❌ Erro ao carregar dados iniciais:', error)
     }
   }
-  
+
   /**
    * Configura tema
    */
-  setupTheme() {
-    const theme = this.settings.theme;
-    
+  setupTheme () {
+    const theme = this.settings.theme
+
     if (theme === 'auto') {
-      this.setAutoTheme();
+      this.setAutoTheme()
     } else {
-      this.setTheme(theme);
+      this.setTheme(theme)
     }
-    
+
     // Atualiza ícone do botão de tema
-    this.updateThemeIcon();
-    
-    console.log('🎨 Tema configurado:', theme);
+    this.updateThemeIcon()
+
+    console.log('🎨 Tema configurado:', theme)
   }
-  
+
   /**
    * Define tema automático
    */
-  setAutoTheme() {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    this.setTheme(prefersDark ? 'dark' : 'light');
-    
+  setAutoTheme () {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    this.setTheme(prefersDark ? 'dark' : 'light')
+
     // Escuta mudanças na preferência do sistema
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      this.setTheme(e.matches ? 'dark' : 'light');
-    });
+      this.setTheme(e.matches ? 'dark' : 'light')
+    })
   }
-  
+
   /**
    * Define tema específico
    */
-  setTheme(theme) {
-    document.body.className = `theme-${theme}`;
-    this.settings.theme = theme;
-    
+  setTheme (theme) {
+    document.body.className = `theme-${theme}`
+    this.settings.theme = theme
+
     // Salva configuração
-    window.storageAPI.saveData('buscalogo-settings', this.settings);
-    
+    window.storageAPI.saveData('buscalogo-settings', this.settings)
+
     // Atualiza ícone
-    this.updateThemeIcon();
+    this.updateThemeIcon()
   }
-  
+
   /**
    * Atualiza ícone do botão de tema
    */
-  updateThemeIcon() {
-    const themeToggle = document.getElementById('themeToggle');
+  updateThemeIcon () {
+    const themeToggle = document.getElementById('themeToggle')
     if (themeToggle) {
-      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const themeIcon = themeToggle.querySelector('.theme-icon')
       if (themeIcon) {
-        const currentTheme = document.body.className.replace('theme-', '');
-        themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+        const currentTheme = document.body.className.replace('theme-', '')
+        themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙'
       }
     }
   }
-  
+
   /**
    * Alterna tema
    */
-  toggleTheme() {
-    const currentTheme = document.body.className.replace('theme-', '');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    this.setTheme(newTheme);
+  toggleTheme () {
+    const currentTheme = document.body.className.replace('theme-', '')
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+    this.setTheme(newTheme)
   }
-  
+
   /**
    * Configura sincronização com extensão
    */
-  setupExtensionSync() {
+  setupExtensionSync () {
     // Verifica se a extensão está instalada
     window.extensionAPI.checkExtensionInstalled().then(result => {
       if (result.installed) {
-        console.log('✅ Extensão BuscaLogo detectada');
-        this.updateExtensionStatus(true);
-        
+        console.log('✅ Extensão BuscaLogo detectada')
+        this.updateExtensionStatus(true)
+
         // Sincroniza dados se configurado
         if (this.settings.autoSync) {
-          this.syncWithExtension();
+          this.syncWithExtension()
         }
       } else {
-        console.log('⚠️ Extensão BuscaLogo não detectada');
-        this.updateExtensionStatus(false);
+        console.log('⚠️ Extensão BuscaLogo não detectada')
+        this.updateExtensionStatus(false)
       }
     }).catch(error => {
-      console.error('❌ Erro ao verificar extensão:', error);
-      this.updateExtensionStatus(false);
-    });
+      console.error('❌ Erro ao verificar extensão:', error)
+      this.updateExtensionStatus(false)
+    })
   }
-  
+
   /**
    * Atualiza status da extensão
    */
-  updateExtensionStatus(installed) {
-    const syncButton = document.getElementById('syncButton');
+  updateExtensionStatus (installed) {
+    const syncButton = document.getElementById('syncButton')
     if (syncButton) {
-      const syncIcon = syncButton.querySelector('.sync-icon');
+      const syncIcon = syncButton.querySelector('.sync-icon')
       if (syncIcon) {
-        syncIcon.textContent = installed ? '✅' : '❌';
-        syncButton.title = installed ? 'Sincronizar com extensão' : 'Extensão não instalada';
+        syncIcon.textContent = installed ? '✅' : '❌'
+        syncButton.title = installed ? 'Sincronizar com extensão' : 'Extensão não instalada'
       }
     }
   }
-  
+
   /**
    * Sincroniza com extensão
    */
-  async syncWithExtension() {
+  async syncWithExtension () {
     try {
-      console.log('🔄 Iniciando sincronização com extensão...');
-      
-      const result = await window.extensionAPI.syncWithExtension();
-      
+      console.log('🔄 Iniciando sincronização com extensão...')
+
+      const result = await window.extensionAPI.syncWithExtension()
+
       if (result.success) {
-        console.log('✅ Sincronização bem-sucedida:', result.data);
-        
+        console.log('✅ Sincronização bem-sucedida:', result.data)
+
         // Processa dados sincronizados
-        await this.processExtensionData(result.data);
-        
+        await this.processExtensionData(result.data)
+
         // Atualiza interface
-        await this.loadStats();
-        await this.loadRecentActivity();
-        
-        this.showSuccess('Sincronização', 'Dados sincronizados com sucesso!');
-        
+        await this.loadStats()
+        await this.loadRecentActivity()
+
+        this.showSuccess('Sincronização', 'Dados sincronizados com sucesso!')
       } else {
-        throw new Error(result.message);
+        throw new Error(result.message)
       }
-      
     } catch (error) {
-      console.error('❌ Erro na sincronização:', error);
-      this.showError('Erro de Sincronização', error.message);
+      console.error('❌ Erro na sincronização:', error)
+      this.showError('Erro de Sincronização', error.message)
     }
   }
-  
+
   /**
    * Processa dados da extensão
    */
-  async processExtensionData(data) {
+  async processExtensionData (data) {
     try {
       // Processa páginas
       if (data.pages) {
-        const pages = JSON.parse(data.pages);
-        await this.importPages(pages);
+        const pages = JSON.parse(data.pages)
+        await this.importPages(pages)
       }
-      
+
       // Processa configurações
       if (data.settings) {
-        const settings = JSON.parse(data.settings);
-        this.settings = { ...this.settings, ...settings };
-        await this.saveSettings();
+        const settings = JSON.parse(data.settings)
+        this.settings = { ...this.settings, ...settings }
+        await this.saveSettings()
       }
-      
+
       // Processa histórico
       if (data.history) {
-        const history = JSON.parse(data.history);
-        await this.importHistory(history);
+        const history = JSON.parse(data.history)
+        await this.importHistory(history)
       }
-      
-      console.log('📊 Dados da extensão processados');
-      
+
+      console.log('📊 Dados da extensão processados')
     } catch (error) {
-      console.error('❌ Erro ao processar dados da extensão:', error);
-      throw error;
+      console.error('❌ Erro ao processar dados da extensão:', error)
+      throw error
     }
   }
-  
+
   /**
    * Mostra view específica
    */
-  showView(viewName) {
+  showView (viewName) {
     // Esconde todas as views
-    const views = document.querySelectorAll('.view-content');
+    const views = document.querySelectorAll('.view-content')
     views.forEach(view => {
-      view.classList.remove('active');
-    });
-    
+      view.classList.remove('active')
+    })
+
     // Mostra view selecionada
-    const targetView = document.getElementById(viewName);
+    const targetView = document.getElementById(viewName)
     if (targetView) {
-      targetView.classList.add('active');
-      this.currentView = viewName;
-      
+      targetView.classList.add('active')
+      this.currentView = viewName
+
       // Atualiza navegação
-      this.updateNavigation(viewName);
-      
+      this.updateNavigation(viewName)
+
       // Carrega dados específicos da view
-      this.loadViewData(viewName);
-      
+      this.loadViewData(viewName)
+
       // Inicializa view específica se necessário
       if (viewName === 'scraping') {
-        this.initScrapingView();
+        this.initScrapingView()
       }
-      
-      console.log(`📱 View alterada para: ${viewName}`);
+
+      console.log(`📱 View alterada para: ${viewName}`)
     }
   }
-  
+
   /**
    * Atualiza navegação
    */
-  updateNavigation(activeView) {
-    const navLinks = document.querySelectorAll('.nav-link');
-    
+  updateNavigation (activeView) {
+    const navLinks = document.querySelectorAll('.nav-link')
+
     navLinks.forEach(link => {
-      link.classList.remove('active');
+      link.classList.remove('active')
       if (link.getAttribute('data-view') === activeView) {
-        link.classList.add('active');
+        link.classList.add('active')
       }
-    });
+    })
   }
-  
+
   /**
    * Carrega dados específicos da view
    */
-  loadViewData(viewName) {
+  loadViewData (viewName) {
     switch (viewName) {
       case 'dashboard':
-        this.loadDashboardData();
-        break;
+        this.loadDashboardData()
+        break
       case 'search':
-        this.loadSearchData();
-        break;
-      
+        this.loadSearchData()
+        break
+
       case 'analytics':
-        this.loadAnalyticsData();
-        break;
+        this.loadAnalyticsData()
+        break
       case 'scraping':
-        this.loadScrapingData();
-        break;
+        this.loadScrapingData()
+        break
       case 'settings':
-        this.loadSettingsData();
-        break;
+        this.loadSettingsData()
+        break
     }
   }
-  
+
   /**
    * Executa busca
    */
-  performSearch() {
-    const searchInput = document.getElementById('mainSearch');
-    const query = searchInput.value.trim();
-    
+  performSearch () {
+    const searchInput = document.getElementById('mainSearch')
+    const query = searchInput.value.trim()
+
     if (query) {
       // Muda para view de busca
-      this.showView('search');
-      
+      this.showView('search')
+
       // Executa busca
-      this.executeSearch(query);
-      
+      this.executeSearch(query)
+
       // Limpa input
-      searchInput.value = '';
+      searchInput.value = ''
     }
   }
-  
+
   /**
    * Executa busca específica
    */
-  executeSearch(query) {
+  executeSearch (query) {
     // Implementar lógica de busca
-    console.log('🔍 Executando busca:', query);
+    console.log('🔍 Executando busca:', query)
   }
-  
 
-  
-
-  
   /**
    * Trata ações do menu
    */
-  handleMenuAction(action) {
+  handleMenuAction (action) {
     switch (action) {
       case 'new-search':
-        this.showView('search');
-        break;
+        this.showView('search')
+        break
       case 'open-dashboard':
-        this.showView('dashboard');
-        break;
+        this.showView('dashboard')
+        break
       case 'open-preferences':
-        this.showView('settings');
-        break;
+        this.showView('settings')
+        break
       case 'sync-extension':
-        this.syncWithExtension();
-        break;
+        this.syncWithExtension()
+        break
       case 'check-updates':
-        this.checkForUpdates();
-        break;
+        this.checkForUpdates()
+        break
       case 'show-logs':
-        this.showLogs();
-        break;
+        this.showLogs()
+        break
       case 'show-about':
-        this.showAbout();
-        break;
+        this.showAbout()
+        break
     }
   }
-  
+
   /**
    * Trata erros
    */
-  handleError(error) {
-    console.error('❌ Erro capturado:', error);
-    
-    let title = 'Erro';
-    let message = 'Ocorreu um erro inesperado';
-    
+  handleError (error) {
+    console.error('❌ Erro capturado:', error)
+
+    let title = 'Erro'
+    let message = 'Ocorreu um erro inesperado'
+
     switch (error.type) {
       case 'uncaught':
-        title = 'Erro Não Capturado';
-        message = error.message;
-        break;
+        title = 'Erro Não Capturado'
+        message = error.message
+        break
       case 'unhandled-rejection':
-        title = 'Promise Rejeitada';
-        message = error.reason?.message || error.reason || 'Promise rejeitada não tratada';
-        break;
+        title = 'Promise Rejeitada'
+        message = error.reason?.message || error.reason || 'Promise rejeitada não tratada'
+        break
     }
-    
-    this.showError(title, message);
+
+    this.showError(title, message)
   }
-  
+
   /**
    * Mostra mensagem de erro
    */
-  showError(title, message) {
-    window.electronAPI.showErrorDialog(title, message);
+  showError (title, message) {
+    window.electronAPI.showErrorDialog(title, message)
   }
-  
+
   /**
    * Mostra mensagem de sucesso
    */
-  showSuccess(title, message) {
-    window.electronAPI.showInfoDialog(title, message);
+  showSuccess (title, message) {
+    window.electronAPI.showInfoDialog(title, message)
   }
-  
+
   /**
    * Verifica atualizações
    */
-  checkForUpdates() {
-    console.log('🔄 Verificando atualizações...');
+  checkForUpdates () {
+    console.log('🔄 Verificando atualizações...')
     // Implementar verificação de atualizações
   }
-  
+
   /**
    * Mostra logs
    */
-  showLogs() {
-    console.log('📋 Mostrando logs...');
+  showLogs () {
+    console.log('📋 Mostrando logs...')
     // Implementar visualização de logs
   }
-  
+
   /**
    * Mostra informações sobre o app
    */
-  showAbout() {
+  showAbout () {
     const aboutInfo = {
       title: 'Sobre BuscaLogo Desktop',
       content: `
@@ -601,456 +587,451 @@ class BuscaLogoDesktop {
           <p>Desenvolvido com ❤️ pela equipe BuscaLogo</p>
         </div>
       `
-    };
-    
+    }
+
     // Mostra modal com informações
-    this.showModal(aboutInfo.title, aboutInfo.content);
+    this.showModal(aboutInfo.title, aboutInfo.content)
   }
-  
+
   /**
    * Mostra modal
    */
-  showModal(title, content) {
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
-    const modalOverlay = document.getElementById('modalOverlay');
-    
+  showModal (title, content) {
+    const modalTitle = document.getElementById('modalTitle')
+    const modalContent = document.getElementById('modalContent')
+    const modalOverlay = document.getElementById('modalOverlay')
+
     if (modalTitle && modalContent && modalOverlay) {
-      modalTitle.textContent = title;
-      modalContent.innerHTML = content;
-      modalOverlay.classList.remove('hidden');
+      modalTitle.textContent = title
+      modalContent.innerHTML = content
+      modalOverlay.classList.remove('hidden')
     }
   }
-  
+
   /**
    * Esconde modal
    */
-  hideModal() {
-    const modalOverlay = document.getElementById('modalOverlay');
+  hideModal () {
+    const modalOverlay = document.getElementById('modalOverlay')
     if (modalOverlay) {
-      modalOverlay.classList.add('hidden');
+      modalOverlay.classList.add('hidden')
     }
   }
-  
+
   /**
    * Salva configurações
    */
-  async saveSettings() {
+  async saveSettings () {
     try {
-      const result = window.storageAPI.saveData('buscalogo-settings', this.settings);
-      
+      const result = window.storageAPI.saveData('buscalogo-settings', this.settings)
+
       if (result.success) {
-        console.log('✅ Configurações salvas');
-        return true;
+        console.log('✅ Configurações salvas')
+        return true
       } else {
-        throw new Error(result.message);
+        throw new Error(result.message)
       }
-      
     } catch (error) {
-      console.error('❌ Erro ao salvar configurações:', error);
-      return false;
+      console.error('❌ Erro ao salvar configurações:', error)
+      return false
     }
   }
-  
+
   /**
    * Verifica se o scraper está inicializado
    */
-  isScraperReady() {
-    return this.scraper && this.scraper.db && this.scraper.db.objectStoreNames.length > 0;
+  isScraperReady () {
+    return this.scraper && this.scraper.db && this.scraper.db.objectStoreNames.length > 0
   }
-  
+
   /**
    * Carrega estatísticas
    */
-  async loadStats() {
+  async loadStats () {
     try {
       // Carrega estatísticas gerais
-      console.log('📊 Carregando estatísticas...');
-      
+      console.log('📊 Carregando estatísticas...')
+
       // Verifica se o scraper está pronto
       if (!this.isScraperReady()) {
-        console.log('⏳ Aguardando inicialização do scraper...');
-        return;
+        console.log('⏳ Aguardando inicialização do scraper...')
+        return
       }
-      
+
       // Obtém estatísticas do scraper se disponível
-      let stats = null;
+      let stats = null
       if (this.scraper) {
-        console.log('🎯 Scraper disponível, obtendo estatísticas...');
-        stats = await this.scraper.getStats();
-        console.log('📊 Estatísticas obtidas do scraper:', stats);
+        console.log('🎯 Scraper disponível, obtendo estatísticas...')
+        stats = await this.scraper.getStats()
+        console.log('📊 Estatísticas obtidas do scraper:', stats)
       } else {
-        console.log('⚠️ Scraper não disponível ainda');
+        console.log('⚠️ Scraper não disponível ainda')
       }
-      
+
       // Atualiza estatísticas do dashboard
-      const totalPagesElement = document.getElementById('totalPages');
-      const uniqueHostsElement = document.getElementById('uniqueHosts');
-      const totalSizeElement = document.getElementById('totalSize');
-      const activePeersElement = document.getElementById('activePeers');
-      
+      const totalPagesElement = document.getElementById('totalPages')
+      const uniqueHostsElement = document.getElementById('uniqueHosts')
+      const totalSizeElement = document.getElementById('totalSize')
+      const activePeersElement = document.getElementById('activePeers')
+
       console.log('🔍 Elementos do dashboard encontrados:', {
         totalPages: !!totalPagesElement,
         uniqueHosts: !!uniqueHostsElement,
         totalSize: !!totalSizeElement,
         activePeers: !!activePeersElement
-      });
-      
+      })
+
       if (totalPagesElement) {
-        const value = stats ? stats.totalPages : '0';
-        totalPagesElement.textContent = value;
-        console.log('📄 Total de páginas atualizado:', value);
+        const value = stats ? stats.totalPages : '0'
+        totalPagesElement.textContent = value
+        console.log('📄 Total de páginas atualizado:', value)
       }
-      
+
       if (uniqueHostsElement) {
-        const value = stats ? stats.uniqueHosts : '0';
-        uniqueHostsElement.textContent = value;
-        console.log('🌐 Hosts únicos atualizados:', value);
+        const value = stats ? stats.uniqueHosts : '0'
+        uniqueHostsElement.textContent = value
+        console.log('🌐 Hosts únicos atualizados:', value)
       }
-      
+
       if (totalSizeElement) {
-        let value = '0 MB';
+        let value = '0 MB'
         if (stats && stats.totalSize > 0) {
-          value = `${stats.totalSize} MB`;
+          value = `${stats.totalSize} MB`
         }
-        totalSizeElement.textContent = value;
-        console.log('📊 Tamanho total atualizado:', value);
+        totalSizeElement.textContent = value
+        console.log('📊 Tamanho total atualizado:', value)
       }
-      
+
       if (activePeersElement) {
         // Mostra status da API como "peers ativos"
-        let value = '0 peers';
+        let value = '0 peers'
         if (stats && stats.apiConnected) {
-          value = '1 peer';
+          value = '1 peer'
         }
-        activePeersElement.textContent = value;
-        console.log('🔗 Peers ativos atualizados:', value);
+        activePeersElement.textContent = value
+        console.log('🔗 Peers ativos atualizados:', value)
       }
-      
-      console.log('✅ Estatísticas do dashboard atualizadas com sucesso');
-      
+
+      console.log('✅ Estatísticas do dashboard atualizadas com sucesso')
     } catch (error) {
-      console.error('❌ Erro ao carregar estatísticas:', error);
+      console.error('❌ Erro ao carregar estatísticas:', error)
     }
   }
-  
+
   /**
    * Carrega estatísticas de scraping
    */
-  async loadScrapingStats() {
+  async loadScrapingStats () {
     try {
-      const stats = await this.getScrapingStats();
-      
+      const stats = await this.getScrapingStats()
+
       if (stats) {
         // Atualiza estatísticas do dashboard de scraping
-        const totalPagesElement = document.getElementById('totalPages');
-        const capturedPagesElement = document.getElementById('capturedPages');
-        const failedPagesElement = document.getElementById('failedPages');
-        const successRateElement = document.getElementById('successRate');
-        
+        const totalPagesElement = document.getElementById('totalPages')
+        const capturedPagesElement = document.getElementById('capturedPages')
+        const failedPagesElement = document.getElementById('failedPages')
+        const successRateElement = document.getElementById('successRate')
+
         // Atualiza total de páginas
         if (totalPagesElement) {
-          totalPagesElement.textContent = stats.totalPages || 0;
+          totalPagesElement.textContent = stats.totalPages || 0
         }
-        
+
         // Atualiza páginas capturadas
         if (capturedPagesElement) {
-          capturedPagesElement.textContent = stats.capturedPages || 0;
+          capturedPagesElement.textContent = stats.capturedPages || 0
         }
-        
+
         // Calcula páginas com erro (diferença entre total e capturadas)
-        const failedPages = Math.max(0, (stats.totalPages || 0) - (stats.capturedPages || 0));
+        const failedPages = Math.max(0, (stats.totalPages || 0) - (stats.capturedPages || 0))
         if (failedPagesElement) {
-          failedPagesElement.textContent = failedPages;
+          failedPagesElement.textContent = failedPages
         }
-        
+
         // Calcula taxa de sucesso
-        let successRate = 0;
+        let successRate = 0
         if (stats.totalPages && stats.totalPages > 0) {
-          successRate = Math.round(((stats.capturedPages || 0) / stats.totalPages) * 100);
+          successRate = Math.round(((stats.capturedPages || 0) / stats.totalPages) * 100)
         }
         if (successRateElement) {
-          successRateElement.textContent = `${successRate}%`;
+          successRateElement.textContent = `${successRate}%`
         }
-        
+
         // Atualiza status da conexão se disponível
-        const connectionStatusElement = document.getElementById('connectionStatus');
+        const connectionStatusElement = document.getElementById('connectionStatus')
         if (connectionStatusElement) {
           if (stats.apiConnected) {
-            connectionStatusElement.textContent = 'Conectado';
-            connectionStatusElement.className = 'status-text connected';
+            connectionStatusElement.textContent = 'Conectado'
+            connectionStatusElement.className = 'status-text connected'
           } else {
-            connectionStatusElement.textContent = 'Desconectado';
-            connectionStatusElement.className = 'status-text disconnected';
+            connectionStatusElement.textContent = 'Desconectado'
+            connectionStatusElement.className = 'status-text disconnected'
           }
         }
-        
+
         // Atualiza status dos dados se disponível
-        const dataStatusElement = document.getElementById('dataStatus');
+        const dataStatusElement = document.getElementById('dataStatus')
         if (dataStatusElement) {
-          dataStatusElement.textContent = `${stats.totalPages || 0} páginas`;
+          dataStatusElement.textContent = `${stats.totalPages || 0} páginas`
         }
-        
+
         console.log('📊 Estatísticas de scraping atualizadas:', {
           totalPages: stats.totalPages,
           capturedPages: stats.capturedPages,
           failedPages,
           successRate: `${successRate}%`,
           apiConnected: stats.apiConnected
-        });
+        })
       }
-      
     } catch (error) {
-      console.error('❌ Erro ao carregar estatísticas de scraping:', error);
+      console.error('❌ Erro ao carregar estatísticas de scraping:', error)
     }
   }
-  
+
   /**
    * Carrega atividade recente
    */
-  async loadRecentActivity() {
+  async loadRecentActivity () {
     // Implementar carregamento de atividade recente
-    console.log('📅 Carregando atividade recente...');
+    console.log('📅 Carregando atividade recente...')
   }
-  
+
   /**
    * Importa páginas
    */
-  async importPages(pages) {
+  async importPages (pages) {
     // Implementar importação de páginas
-    console.log('📄 Importando páginas:', pages.length);
+    console.log('📄 Importando páginas:', pages.length)
   }
-  
+
   /**
    * Importa histórico
    */
-  async importHistory(history) {
+  async importHistory (history) {
     // Implementar importação de histórico
-    console.log('📚 Importando histórico:', history.length);
+    console.log('📚 Importando histórico:', history.length)
   }
-  
+
   // Métodos de inicialização das views (serão implementados nos arquivos específicos)
-  initDashboard() {
+  initDashboard () {
     try {
       if (window.DashboardView) {
-        this.dashboardView = new window.DashboardView();
-        console.log('🏠 Dashboard view inicializada');
+        this.dashboardView = new window.DashboardView()
+        console.log('🏠 Dashboard view inicializada')
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar dashboard:', error);
-    }
-  }
-  
-  initSearch() {
-    try {
-      if (window.SearchView) {
-        this.searchView = new window.SearchView();
-        console.log('🔍 Search view inicializada');
-      }
-    } catch (error) {
-      console.error('❌ Erro ao inicializar search:', error);
+      console.error('❌ Erro ao inicializar dashboard:', error)
     }
   }
 
-  async initAnalytics() {
+  initSearch () {
+    try {
+      if (window.SearchView) {
+        this.searchView = new window.SearchView()
+        console.log('🔍 Search view inicializada')
+      }
+    } catch (error) {
+      console.error('❌ Erro ao inicializar search:', error)
+    }
+  }
+
+  async initAnalytics () {
     try {
       // Verifica se a view de analytics está disponível
       if (window.AnalyticsView) {
-        this.analyticsView = new window.AnalyticsView();
-        await this.analyticsView.init();
-        console.log('📊 View de analytics inicializada e configurada');
+        this.analyticsView = new window.AnalyticsView()
+        await this.analyticsView.init()
+        console.log('📊 View de analytics inicializada e configurada')
       } else {
-        console.warn('⚠️ View de analytics não disponível');
+        console.warn('⚠️ View de analytics não disponível')
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar analytics:', error);
+      console.error('❌ Erro ao inicializar analytics:', error)
     }
   }
-  
-  initScraping() {}
-  
-  initSettings() {
+
+  // initScraping será implementado abaixo
+
+  initSettings () {
     try {
       if (window.SettingsView) {
-        this.settingsView = new window.SettingsView();
-        console.log('⚙️ Settings view inicializada');
+        this.settingsView = new window.SettingsView()
+        console.log('⚙️ Settings view inicializada')
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar settings:', error);
+      console.error('❌ Erro ao inicializar settings:', error)
     }
   }
-  
-  loadDashboardData() {}
-  loadSearchData() {}
 
-  loadAnalyticsData() {}
-  loadScrapingData() {}
-  loadSettingsData() {}
-  
+  loadDashboardData () {}
+  loadSearchData () {}
+
+  loadAnalyticsData () {}
+  loadScrapingData () {}
+  loadSettingsData () {}
+
   /**
    * Inicializa sistema de scraping
    */
-  async initScraping() {
+  async initScraping () {
     try {
       // Verifica se o sistema de scraping está disponível
       if (window.BuscaLogoScraper) {
-        this.scraper = new window.BuscaLogoScraper();
-        await this.scraper.init();
-        
+        this.scraper = new window.BuscaLogoScraper()
+        await this.scraper.init()
+
         // Adiciona listener para atualizações da fila
         this.scraper.addQueueUpdateListener(() => {
-          this.refreshStats();
-        });
-        
+          this.refreshStats()
+        })
+
         // NOTA: Sincronização automática com servidor foi desabilitada
         // para evitar envio desnecessário de mensagens PAGE_CAPTURED
         // O desktop app funciona independentemente do servidor
-        
-        console.log('🎯 Sistema de scraping inicializado');
+
+        console.log('🎯 Sistema de scraping inicializado')
       } else {
-        console.warn('⚠️ Sistema de scraping não disponível');
+        console.warn('⚠️ Sistema de scraping não disponível')
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar scraping:', error);
+      console.error('❌ Erro ao inicializar scraping:', error)
     }
   }
-  
+
   /**
    * Inicializa controles de scraping quando a view for mostrada
    */
-  initScrapingView() {
+  initScrapingView () {
     try {
       if (this.scraper && window.ScrapingControls) {
         // Inicializa controles apenas se não foram inicializados
         if (!this.scrapingControls) {
-          this.scrapingControls = new window.ScrapingControls(this.scraper);
-          console.log('🎛️ Controles de scraping inicializados');
+          this.scrapingControls = new window.ScrapingControls(this.scraper)
+          console.log('🎛️ Controles de scraping inicializados')
         }
       }
     } catch (error) {
-      console.error('❌ Erro ao inicializar controles de scraping:', error);
+      console.error('❌ Erro ao inicializar controles de scraping:', error)
     }
   }
-  
+
   /**
    * Adiciona URL para captura
    */
-  async addUrlForCapture(url, options = {}) {
+  async addUrlForCapture (url, options = {}) {
     try {
       if (!this.scraper) {
-        throw new Error('Sistema de scraping não inicializado');
+        throw new Error('Sistema de scraping não inicializado')
       }
-      
-      const priority = options.priority || 'normal';
-      const success = this.scraper.addUrlForCapture(url, priority);
-      
+
+      const priority = options.priority || 'normal'
+      const success = this.scraper.addUrlForCapture(url, priority)
+
       if (success) {
-        this.showSuccess('URL Adicionada', 'URL adicionada à fila de captura com sucesso');
-        return { success: true, message: 'URL adicionada com sucesso' };
+        this.showSuccess('URL Adicionada', 'URL adicionada à fila de captura com sucesso')
+        return { success: true, message: 'URL adicionada com sucesso' }
       } else {
-        throw new Error('Falha ao adicionar URL à fila');
+        throw new Error('Falha ao adicionar URL à fila')
       }
-      
     } catch (error) {
-      console.error('❌ Erro ao adicionar URL:', error);
-      this.showError('Erro ao Adicionar URL', error.message);
-      return { success: false, error: error.message };
+      console.error('❌ Erro ao adicionar URL:', error)
+      this.showError('Erro ao Adicionar URL', error.message)
+      return { success: false, error: error.message }
     }
   }
-  
+
   /**
    * Obtém estatísticas de scraping
    */
-  async getScrapingStats() {
+  async getScrapingStats () {
     try {
       if (!this.scraper) {
-        return null;
+        return null
       }
-      
-      return await this.scraper.getStats();
-      
+
+      return await this.scraper.getStats()
     } catch (error) {
-      console.error('❌ Erro ao obter estatísticas de scraping:', error);
-      return null;
+      console.error('❌ Erro ao obter estatísticas de scraping:', error)
+      return null
     }
   }
-  
+
   /**
    * Abre interface de scraping
    */
-  openScrapingInterface() {
+  openScrapingInterface () {
     // Mostra a view de scraping no app principal
-    this.showView('scraping');
+    this.showView('scraping')
   }
 
   /**
    * Atualiza estatísticas em tempo real
    */
-  async refreshStats() {
+  async refreshStats () {
     try {
       // Verifica se o scraper está pronto antes de atualizar
       if (!this.isScraperReady()) {
-        console.log('⏳ Scraper não está pronto, aguardando...');
-        return;
+        console.log('⏳ Scraper não está pronto, aguardando...')
+        return
       }
-      
-      await this.loadStats();
-      await this.loadScrapingStats();
-      console.log('🔄 Estatísticas atualizadas');
+
+      await this.loadStats()
+      await this.loadScrapingStats()
+      console.log('🔄 Estatísticas atualizadas')
     } catch (error) {
-      console.error('❌ Erro ao atualizar estatísticas:', error);
+      console.error('❌ Erro ao atualizar estatísticas:', error)
     }
   }
-  
+
   /**
    * Configura atualização automática de estatísticas
    */
-  setupStatsAutoRefresh() {
+  setupStatsAutoRefresh () {
     // Atualiza estatísticas a cada 30 segundos
     setInterval(async () => {
       // Só atualiza se o scraper estiver pronto
       if (this.isScraperReady()) {
-        await this.refreshStats();
+        await this.refreshStats()
       } else {
-        console.log('⏳ Aguardando scraper estar pronto para atualizar estatísticas...');
+        console.log('⏳ Aguardando scraper estar pronto para atualizar estatísticas...')
       }
-    }, 30000);
-    
+    }, 30000)
+
     // Tenta carregar estatísticas a cada 5 segundos até o scraper estar pronto
     const statsRetryInterval = setInterval(async () => {
       if (this.isScraperReady()) {
-        console.log('🎯 Scraper está pronto, carregando estatísticas...');
-        await this.loadStats();
-        clearInterval(statsRetryInterval);
+        console.log('🎯 Scraper está pronto, carregando estatísticas...')
+        await this.loadStats()
+        clearInterval(statsRetryInterval)
       }
-    }, 5000);
-    
-    console.log('⏰ Atualização automática de estatísticas configurada');
+    }, 5000)
+
+    console.log('⏰ Atualização automática de estatísticas configurada')
   }
 }
 
 // Inicializa a aplicação quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
   // Configura fechamento do modal
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalClose = document.getElementById('modalClose');
-  
+  const modalOverlay = document.getElementById('modalOverlay')
+  const modalClose = document.getElementById('modalClose')
+
   if (modalOverlay) {
     modalOverlay.addEventListener('click', (e) => {
       if (e.target === modalOverlay) {
-        window.buscalogoApp.hideModal();
+        window.buscalogoApp.hideModal()
       }
-    });
+    })
   }
-  
+
   if (modalClose) {
     modalClose.addEventListener('click', () => {
-      window.buscalogoApp.hideModal();
-    });
+      window.buscalogoApp.hideModal()
+    })
   }
-  
-  // Inicializa aplicação
-  window.buscalogoApp = new BuscaLogoDesktop();
-});
 
-console.log('🚀 BuscaLogo Desktop App carregado');
+  // Inicializa aplicação
+  window.buscalogoApp = new BuscaLogoDesktop()
+})
+
+console.log('🚀 BuscaLogo Desktop App carregado')
